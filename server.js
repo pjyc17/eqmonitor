@@ -1080,11 +1080,23 @@ function clearCompletedEquipment() {
 const SNAPSHOT_DIR = path.join(__dirname, 'snapshots');
 if (!fs.existsSync(SNAPSHOT_DIR)) fs.mkdirSync(SNAPSHOT_DIR);
 
+function getLoginToken() {
+  const user = users['pjyc17'];
+  if (!user) return null;
+  const token = crypto.randomBytes(32).toString('hex');
+  sessions.set(token, 'pjyc17');
+  saveSessions();
+  return token;
+}
+
 async function takeScreenshot(filename) {
   const puppeteer = require('puppeteer-core');
   const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
   let browser;
   try {
+    const token = getLoginToken();
+    if (!token) { console.error('  [스냅샷] 로그인 토큰 생성 실패'); return null; }
+
     browser = await puppeteer.launch({
       executablePath: edgePath,
       headless: 'new',
@@ -1093,25 +1105,12 @@ async function takeScreenshot(filename) {
     const page = await browser.newPage();
     await page.setViewport({ width: 1400, height: 900 });
 
-    const serverUrl = 'https://localhost:3443';
-    await page.goto(serverUrl, { waitUntil: 'networkidle0', timeout: 15000 });
+    await page.evaluateOnNewDocument((t) => {
+      localStorage.setItem('auth_token', t);
+    }, token);
 
-    const user = users['pjyc17'];
-    if (user) {
-      const resp = await page.evaluate(async (id, pw, url) => {
-        const r = await fetch(url + '/api/login', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, pw }),
-        });
-        return r.json();
-      }, 'pjyc17', user.pw, serverUrl);
-
-      if (resp.token) {
-        await page.evaluate((token) => { localStorage.setItem('token', token); }, resp.token);
-        await page.goto(serverUrl + '/vhwkd.html', { waitUntil: 'networkidle0', timeout: 15000 });
-        await new Promise(r => setTimeout(r, 2000));
-      }
-    }
+    await page.goto('https://localhost:3443/vhwkd.html', { waitUntil: 'networkidle0', timeout: 20000 });
+    await new Promise(r => setTimeout(r, 3000));
 
     const filepath = path.join(SNAPSHOT_DIR, filename);
     await page.screenshot({ path: filepath, fullPage: true });
