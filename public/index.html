@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1e293b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="설비현황">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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">
+<title>설비 점유 현황</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, 'Malgun Gothic', sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.header {
+  background: #1e293b;
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+@media (max-width: 480px) {
+  .header { flex-direction: column; align-items: stretch; }
+  .header-right { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+.header-left h1 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.header .summary {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.header .summary .stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.empty { background: #475569; }
+.dot.free { background: #22c55e; }
+.dot.occupied { background: #ef4444; }
+
+.import-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+.import-btn:active { transform: scale(0.95); }
+.import-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+
+.tabs-wrapper {
+  position: relative;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+.tabs-arrow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #1e293b 60%, transparent);
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 2;
+  user-select: none;
+}
+.tabs-arrow:active { color: #3b82f6; }
+.tabs-arrow.left { left: 0; }
+.tabs-arrow.right { right: 0; background: linear-gradient(270deg, #1e293b 60%, transparent); }
+
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin: 0 32px;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0;
+  padding: 12px 14px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.tab .tab-count {
+  font-size: 11px;
+  font-weight: 400;
+  color: #94a3b8;
+  display: block;
+}
+
+.line-view { padding: 12px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(8, 1fr); }
+}
+@media (min-width: 1200px) {
+  .grid { grid-template-columns: repeat(10, 1fr); }
+}
+
+.eq-card {
+  background: #1e293b;
+  border: 2px solid #334155;
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.eq-card:active { transform: scale(0.95); }
+
+.eq-card.empty { border-color: #334155; opacity: 0.5; }
+.eq-card.free { border-color: #22c55e40; }
+.eq-card.free:hover { border-color: #22c55e; background: #22c55e10; }
+.eq-card.occupied { border-color: #ef4444; background: #ef444415; }
+
+.eq-card.sh-parts { border-color: #f59e0b; background: #f59e0b15; }
+.eq-card.sh-nt { border-color: #3b82f6; background: #3b82f615; }
+.eq-card.sh-fqc { border-color: #22c55e; background: #22c55e15; }
+.eq-card.sh-checker { border-color: #475569; background: repeating-conic-gradient(#334155 0% 25%, #1e293b 0% 50%) 0 0/8px 8px; }
+.eq-card.sh-done { border-color: #334155; background: #0f172a; opacity: 0.7; }
+.eq-card .prepack-badge {
+  position: absolute; top: -5px; right: -5px;
+  background: #a855f7; color: #fff; font-size: 8px; font-weight: 700;
+  padding: 1px 4px; border-radius: 4px; line-height: 1.3;
+}
+.eq-card .ship-stage-label {
+  font-size: 8px; margin-top: 2px; font-weight: 600;
+}
+.eq-card.sh-parts .ship-stage-label { color: #f59e0b; }
+.eq-card.sh-nt .ship-stage-label { color: #3b82f6; }
+.eq-card.sh-fqc .ship-stage-label { color: #22c55e; }
+.eq-card.sh-checker .ship-stage-label { color: #94a3b8; }
+.eq-card.sh-done .ship-stage-label { color: #64748b; }
+
+.eq-card .eq-number { font-size: 16px; font-weight: 700; }
+.eq-card .eq-name {
+  font-size: 9px; color: #94a3b8; margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;
+}
+.eq-card .eq-priority {
+  position: absolute; top: 4px; right: 6px;
+  font-size: 9px; font-weight: 700; color: #f97316;
+}
+.eq-card .eq-status { font-size: 10px; margin-top: 4px; color: #94a3b8; }
+.eq-card.free .eq-status { color: #22c55e; }
+.eq-card .eq-team { font-size: 12px; font-weight: 700; margin-top: 2px; color: #fbbf24; }
+.eq-card .eq-time { font-size: 9px; color: #64748b; margin-top: 2px; }
+.eq-card .eq-dday {
+  font-size: 9px; font-weight: 700; margin-top: 2px;
+  padding: 1px 4px; border-radius: 3px;
+}
+.eq-dday.urgent { background: #ef444430; color: #ef4444; }
+.eq-dday.soon { background: #f9731630; color: #f97316; }
+.eq-dday.normal { background: #3b82f620; color: #3b82f6; }
+.eq-card .eq-inspect {
+  display: flex; gap: 3px; margin-top: 2px; justify-content: center;
+}
+.eq-inspect-dot {
+  width: 8px; height: 8px; border-radius: 50%; border: 1px solid #475569;
+}
+.eq-inspect-dot.done { background: #22c55e; border-color: #22c55e; }
+
+.inspect-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: #0f172a; border-radius: 10px; margin-bottom: 8px;
+}
+.inspect-label { font-size: 14px; }
+.inspect-check {
+  width: 28px; height: 28px; border-radius: 6px; border: 2px solid #334155;
+  background: #0f172a; color: transparent; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.inspect-check.done { background: #22c55e; border-color: #22c55e; color: white; }
+
+.shipdate-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+}
+.shipdate-input {
+  flex: 1; padding: 10px 12px; border-radius: 8px;
+  border: 2px solid #334155; background: #0f172a; color: #e2e8f0;
+  font-size: 14px; outline: none;
+}
+.shipdate-input:focus { border-color: #3b82f6; }
+.shipdate-set {
+  padding: 10px 14px; border-radius: 8px; border: none;
+  background: #3b82f6; color: white; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+}
+
+/* 모달 */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); z-index: 200;
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+
+.modal {
+  background: #1e293b; border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 500px; padding: 24px 20px 40px;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-handle { width: 40px; height: 4px; background: #475569; border-radius: 2px; margin: 0 auto 20px; }
+.modal h2 { font-size: 20px; margin-bottom: 4px; }
+.modal .modal-subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+
+.modal-info {
+  background: #0f172a; border-radius: 10px; padding: 12px 14px;
+  margin-bottom: 16px; font-size: 13px;
+}
+.modal-info .info-row {
+  display: flex; justify-content: space-between; padding: 4px 0;
+  border-bottom: 1px solid #1e293b;
+}
+.modal-info .info-row:last-child { border-bottom: none; }
+.modal-info .info-label { color: #64748b; }
+.modal-info .info-value { color: #e2e8f0; font-weight: 600; }
+
+.team-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+
+.team-btn {
+  padding: 14px 8px; border-radius: 10px; border: 2px solid #334155;
+  background: #0f172a; color: #e2e8f0; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.team-btn:active { transform: scale(0.95); }
+.team-btn:hover { border-color: #3b82f6; background: #3b82f620; }
+
+.receive-btn, .checkout-btn, .release-btn, .cancel-btn {
+  width: 100%; padding: 14px; border-radius: 10px; border: none;
+  font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px;
+}
+.receive-btn { background: #3b82f6; color: white; }
+.receive-btn:active { transform: scale(0.95); background: #2563eb; }
+.checkout-btn { background: #ef4444; color: white; }
+.checkout-btn:active { transform: scale(0.95); background: #dc2626; }
+.release-btn { background: #f97316; color: white; }
+.release-btn:active { transform: scale(0.95); background: #ea580c; }
+.cancel-btn { background: transparent; border: 2px solid #334155 !important; color: #94a3b8; font-size: 14px; }
+
+.equip-input {
+  width: 100%; padding: 14px; border-radius: 10px;
+  border: 2px solid #334155; background: #0f172a; color: #e2e8f0;
+  font-size: 16px; margin-bottom: 8px; outline: none;
+}
+.equip-input:focus { border-color: #3b82f6; }
+
+.qr-scan-btn {
+  width: 100%; padding: 14px; border-radius: 10px;
+  border: 2px solid #334155; background: #0f172a; color: #e2e8f0;
+  font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 8px;
+}
+.qr-scan-btn:active { transform: scale(0.95); }
+.qr-scan-btn:hover { border-color: #8b5cf6; color: #8b5cf6; }
+
+#qr-reader { width: 100%; margin-bottom: 12px; border-radius: 10px; overflow: hidden; }
+#qr-reader video { border-radius: 10px; }
+
+.input-divider {
+  text-align: center; color: #475569; font-size: 13px;
+  margin: 12px 0; position: relative;
+}
+.input-divider::before, .input-divider::after {
+  content: ''; position: absolute; top: 50%;
+  width: 40%; height: 1px; background: #334155;
+}
+.input-divider::before { left: 0; }
+.input-divider::after { right: 0; }
+
+.import-textarea {
+  width: 100%; height: 200px; padding: 12px; border-radius: 10px;
+  border: 2px solid #334155; background: #0f172a; color: #e2e8f0;
+  font-size: 13px; font-family: monospace; margin-bottom: 8px;
+  outline: none; resize: vertical;
+}
+.import-textarea:focus { border-color: #3b82f6; }
+
+.import-result {
+  padding: 10px 14px; border-radius: 8px; margin-top: 8px;
+  font-size: 13px; font-weight: 600;
+}
+.import-result.success { background: #22c55e20; color: #22c55e; }
+.import-result.error { background: #ef444420; color: #ef4444; }
+
+/* 전체 보기 */
+.overview { padding: 12px; }
+.overview-line { margin-bottom: 16px; }
+.overview-line h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #94a3b8; }
+.overview-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.overview-dot {
+  width: 24px; height: 24px; border-radius: 4px; cursor: pointer;
+  transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+  font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.25);
+}
+.overview-dot:hover { transform: scale(1.3); color: white; }
+.overview-dot.occupied { color: rgba(255,255,255,0.5); }
+.overview-dot.empty { background: #33415540; border: 1px solid #33415560; opacity: 0.4; }
+.overview-dot.free { background: #22c55e40; border: 1px solid #22c55e60; }
+.overview-dot.occupied { background: #ef4444; border: 1px solid #ef4444; }
+.overview-dot.sh-parts { background: #f59e0b30; border: 1px solid #f59e0b; }
+.overview-dot.sh-nt { background: #3b82f630; border: 1px solid #3b82f6; }
+.overview-dot.sh-fqc { background: #22c55e30; border: 1px solid #22c55e; }
+.overview-dot.sh-checker { background: repeating-conic-gradient(#334155 0% 25%, #1e293b 0% 50%) 0 0/4px 4px; border: 1px solid #475569; }
+.overview-dot.sh-done { background: #0f172a; border: 1px solid #334155; opacity: 0.6; }
+
+.connection-status {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  z-index: 150; transition: all 0.3s;
+}
+.connection-status.connected { background: #22c55e20; color: #22c55e; border: 1px solid #22c55e40; }
+.connection-status.disconnected { background: #ef444420; color: #ef4444; border: 1px solid #ef444440; }
+
+@media (min-width: 768px) {
+  .modal { border-radius: 20px; margin-bottom: 20px; }
+  .modal-overlay { align-items: center; }
+}
+
+.login-screen {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 20px;
+}
+.login-box {
+  width: 100%; max-width: 340px; text-align: center;
+}
+.login-box h1 { font-size: 22px; margin-bottom: 8px; }
+.login-box p { font-size: 13px; color: #64748b; margin-bottom: 28px; }
+.login-input {
+  width: 100%; padding: 14px; border-radius: 10px;
+  border: 2px solid #334155; background: #1e293b; color: #e2e8f0;
+  font-size: 16px; margin-bottom: 10px; outline: none;
+}
+.login-input:focus { border-color: #3b82f6; }
+.login-submit {
+  width: 100%; padding: 14px; border-radius: 10px; border: none;
+  background: #3b82f6; color: #fff; font-size: 16px; font-weight: 700;
+  cursor: pointer; margin-top: 6px;
+}
+.login-submit:active { transform: scale(0.97); }
+.login-error { color: #ef4444; font-size: 13px; margin-top: 10px; }
+.login-toggle { font-size: 13px; color: #64748b; margin-top: 16px; }
+.login-toggle a { color: #3b82f6; text-decoration: none; }
+.login-input select, select.login-input { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+.user-info { font-size: 12px; color: #64748b; display: flex; align-items: center; gap: 8px; }
+.user-info strong { color: #e2e8f0; }
+.logout-btn {
+  background: none; border: 1px solid #475569; color: #94a3b8;
+  padding: 3px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;
+}
+
+.schedule-view { padding: 12px; }
+.schedule-view h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+.schedule-date-group { margin-bottom: 20px; }
+.schedule-date-header {
+  font-size: 13px; font-weight: 700; color: #94a3b8; margin-bottom: 8px;
+  padding: 6px 10px; background: #1e293b; border-radius: 6px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.schedule-date-header .dday-tag {
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+}
+.schedule-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.schedule-table th {
+  text-align: left; padding: 6px 10px; color: #64748b; font-size: 11px;
+  border-bottom: 1px solid #334155;
+}
+.schedule-table td {
+  padding: 8px 10px; border-bottom: 1px solid #1e293b; cursor: pointer;
+}
+.schedule-table tr:hover td { background: #1e293b; }
+.schedule-table .slot-col { color: #3b82f6; font-weight: 600; white-space: nowrap; }
+.schedule-table .inspect-col { display: flex; gap: 4px; align-items: center; }
+.schedule-empty { text-align: center; color: #64748b; font-size: 14px; padding: 40px 0; }
+
+.search-btn {
+  padding: 8px 14px; border-radius: 8px; border: 1px solid #334155;
+  background: #0f172a; color: #94a3b8; font-size: 12px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; margin-top: 4px;
+}
+.search-btn:active { transform: scale(0.95); }
+.search-btn:hover { border-color: #8b5cf6; color: #8b5cf6; }
+
+.history-btn {
+  width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #334155;
+  background: #0f172a; color: #94a3b8; font-size: 14px; font-weight: 600;
+  cursor: pointer; margin-top: 8px;
+}
+.history-btn:active { transform: scale(0.95); }
+.history-btn:hover { border-color: #8b5cf6; color: #8b5cf6; }
+
+.timeline { margin-top: 16px; position: relative; padding-left: 24px; }
+.timeline::before {
+  content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+  width: 2px; background: #334155;
+}
+.timeline-item { position: relative; margin-bottom: 16px; }
+.timeline-dot {
+  position: absolute; left: -20px; top: 4px;
+  width: 12px; height: 12px; border-radius: 50%; border: 2px solid #1e293b;
+}
+.timeline-dot.receive { background: #22c55e; }
+.timeline-dot.checkin { background: #3b82f6; }
+.timeline-dot.checkout { background: #94a3b8; }
+.timeline-dot.release { background: #ef4444; }
+.timeline-time { font-size: 11px; color: #64748b; }
+.timeline-content { font-size: 13px; color: #e2e8f0; margin-top: 2px; }
+.timeline-user { font-size: 11px; color: #94a3b8; }
+.timeline-date-sep {
+  font-size: 11px; color: #64748b; background: #1e293b; padding: 4px 8px;
+  border-radius: 4px; margin: 12px 0 12px -24px; display: inline-block;
+}
+.timeline-empty {
+  text-align: center; color: #64748b; font-size: 13px; padding: 24px 0;
+}
+
+.search-input-wrap {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.search-input-wrap input {
+  flex: 1; padding: 12px; border-radius: 10px;
+  border: 2px solid #334155; background: #0f172a; color: #e2e8f0;
+  font-size: 15px; outline: none;
+}
+.search-input-wrap input:focus { border-color: #8b5cf6; }
+.search-input-wrap button {
+  padding: 12px 16px; border-radius: 10px; border: none;
+  background: #8b5cf6; color: #fff; font-size: 14px; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+}
+
+.search-group { margin-bottom: 20px; }
+.search-group-title {
+  font-size: 14px; font-weight: 700; color: #e2e8f0;
+  margin-bottom: 8px; cursor: pointer; padding: 8px 12px;
+  background: #0f172a; border-radius: 8px;
+}
+.search-group-title:hover { background: #1e293b; }
+.search-group-title .slot-link { color: #3b82f6; font-size: 12px; margin-left: 8px; }
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen" style="display:none;">
+  <div class="login-box">
+    <h1>설비 점유 현황</h1>
+    <p>로그인 후 이용할 수 있습니다</p>
+    <div id="loginForm">
+      <input class="login-input" id="loginId" type="text" placeholder="ID" autocomplete="off">
+      <input class="login-input" id="loginPw" type="password" placeholder="비밀번호">
+      <label style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:#94a3b8;cursor:pointer;"><input type="checkbox" id="autoLogin" style="accent-color:#3b82f6;">자동 로그인</label>
+      <button class="login-submit" onclick="doLogin()">로그인</button>
+      <div class="login-error" id="loginError"></div>
+      <div class="login-toggle">계정이 없으신가요? <a href="#" onclick="showRegister(); return false;">회원가입</a></div>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <input class="login-input" id="regId" type="text" placeholder="ID" autocomplete="off">
+      <input class="login-input" id="regPw" type="password" placeholder="비밀번호">
+      <input class="login-input" id="regName" type="text" placeholder="이름" autocomplete="off">
+      <select class="login-input" id="regDept">
+        <option value="" disabled selected>소속 선택</option>
+        <option value="산업품질1팀">산업품질1팀</option>
+        <option value="산업품질2팀">산업품질2팀</option>
+        <option value="제조혁신1&2팀">제조혁신1&2팀</option>
+        <option value="엔티">엔티</option>
+        <option value="생산관리">생산관리</option>
+      </select>
+      <button class="login-submit" onclick="doRegister()">회원가입</button>
+      <div class="login-error" id="regError"></div>
+      <div class="login-toggle">이미 계정이 있으신가요? <a href="#" onclick="showLogin(); return false;">로그인</a></div>
+    </div>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none;">
+
+<div class="header">
+  <div class="header-left">
+    <h1>설비 점유 현황</h1>
+    <div class="summary">
+      <div class="stat"><span class="dot empty"></span> 미입고: <strong id="emptyCount">0</strong></div>
+      <div class="stat"><span class="dot free"></span> 비어있음: <strong id="freeCount">0</strong></div>
+      <div class="stat"><span class="dot occupied"></span> 작업중: <strong id="occupiedCount">0</strong></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="user-info" id="userInfo"></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="search-btn" onclick="openSearchModal()">&#128269; 장비 검색</button>
+      <button class="import-btn" onclick="openImportModal()">메일 가져오기</button>
+      <button class="import-btn" onclick="location.href='/vhwkd'" style="border-color:#06b6d4;color:#06b6d4;">&#128203; 출하(daily)</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-wrapper">
+  <div class="tabs-arrow left" onclick="scrollTabs(-1)">&#9664;</div>
+  <div class="tabs" id="tabs"></div>
+  <div class="tabs-arrow right" onclick="scrollTabs(1)">&#9654;</div>
+</div>
+<div id="content"></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="connection-status connected" id="connStatus">연결됨</div>
+
+</div><!-- /mainApp -->
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+let authToken = localStorage.getItem('auth_token');
+let currentUser = null;
+let socket = null;
+
+let allEquipment = {};
+let teams = [];
+let lineNames = [];
+let lineConfig = {};
+let currentLine = null;
+
+async function doLogin(auto) {
+  let id, pw;
+  if (auto) {
+    const saved = localStorage.getItem('auto_login');
+    if (!saved) return false;
+    try { const d = JSON.parse(saved); id = d.id; pw = d.pw; } catch(e) { return false; }
+  } else {
+    id = document.getElementById('loginId').value.trim();
+    pw = document.getElementById('loginPw').value;
+  }
+  if (!id || !pw) return false;
+  try {
+    const res = await fetch('/api/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({id, pw}) });
+    const data = await res.json();
+    if (!res.ok) {
+      if (auto) { localStorage.removeItem('auto_login'); return false; }
+      document.getElementById('loginError').textContent = data.error; return false;
+    }
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('auth_token', authToken);
+    if (!auto && document.getElementById('autoLogin').checked) {
+      localStorage.setItem('auto_login', JSON.stringify({id, pw}));
+    }
+    const params = new URLSearchParams(location.search);
+    const redirect = params.get('redirect');
+    if (redirect) { location.href = '/' + redirect; return true; }
+    showMainApp();
+    return true;
+  } catch(e) {
+    if (!auto) document.getElementById('loginError').textContent = '서버 연결 실패';
+    return false;
+  }
+}
+
+function showRegister() {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('registerForm').style.display = 'block';
+  document.getElementById('regError').textContent = '';
+}
+
+function showLogin() {
+  document.getElementById('loginForm').style.display = 'block';
+  document.getElementById('registerForm').style.display = 'none';
+  document.getElementById('loginError').textContent = '';
+}
+
+async function doRegister() {
+  const id = document.getElementById('regId').value.trim();
+  const pw = document.getElementById('regPw').value;
+  const name = document.getElementById('regName').value.trim();
+  const dept = document.getElementById('regDept').value;
+  if (!id || !pw || !name || !dept) { document.getElementById('regError').textContent = '모든 항목을 입력해주세요'; return; }
+  try {
+    const res = await fetch('/api/register', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({id, pw, name, dept}) });
+    const data = await res.json();
+    if (!res.ok) { document.getElementById('regError').textContent = data.error; return; }
+    document.getElementById('loginId').value = id;
+    document.getElementById('loginPw').value = pw;
+    showLogin();
+    doLogin();
+  } catch(e) { document.getElementById('regError').textContent = '서버 연결 실패'; }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['loginId', 'loginPw'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+  });
+  ['regId', 'regPw', 'regName'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', (e) => { if (e.key === 'Enter') doRegister(); });
+  });
+});
+
+async function checkAuth() {
+  if (!authToken) {
+    if (await doLogin(true)) return;
+    showLoginScreen(); return;
+  }
+  try {
+    const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + authToken } });
+    if (!res.ok) {
+      if (await doLogin(true)) return;
+      showLoginScreen(); return;
+    }
+    currentUser = await res.json();
+    showMainApp();
+  } catch(e) { showLoginScreen(); }
+}
+
+function showLoginScreen() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('mainApp').style.display = 'none';
+}
+
+function showMainApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('userInfo').innerHTML = '<strong>' + currentUser.name + '</strong> (' + currentUser.dept + ') <button class="logout-btn" onclick="doLogout()">로그아웃</button>';
+  connectSocket();
+}
+
+function doLogout() {
+  fetch('/api/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + authToken } });
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('auto_login');
+  location.reload();
+}
+
+function connectSocket() {
+  if (socket) return;
+  socket = io({ auth: { token: authToken }, reconnection: true, reconnectionDelay: 3000 });
+
+  const connStatus = document.getElementById('connStatus');
+  socket.on('connect', () => {
+    connStatus.textContent = '연결됨';
+    connStatus.className = 'connection-status connected';
+  });
+
+  socket.on('disconnect', () => {
+    connStatus.textContent = '서버 연결이 끊겼습니다. 다시 로그인해주세요.';
+    connStatus.className = 'connection-status disconnected';
+    localStorage.removeItem('auth_token');
+    authToken = null;
+    currentUser = null;
+    socket = null;
+    setTimeout(() => showLoginScreen(), 1500);
+  });
+
+  socket.on('init', (data) => {
+    allEquipment = data.equipment;
+    teams = data.teams;
+    lineNames = data.lineNames || ['A','B','C','D','E'];
+    lineConfig = data.lineConfig || {};
+    buildTabs();
+    render();
+  });
+
+  socket.on('update', (eq) => {
+    allEquipment[eq.id] = eq;
+    render();
+  });
+}
+
+checkAuth();
+
+function scrollTabs(dir) {
+  const tabs = document.getElementById('tabs');
+  tabs.scrollBy({ left: dir * 150, behavior: 'smooth' });
+}
+
+function buildTabs() {
+  const tabsEl = document.getElementById('tabs');
+  const shipCount = Object.values(allEquipment).filter(e => e.shipDate && e.status !== 'empty').length;
+  let html = `<div class="tab ${currentLine === null ? 'active' : ''}" onclick="switchTab(null)">전체</div>`;
+  html += `<div class="tab ${currentLine === '__schedule' ? 'active' : ''}" onclick="switchTab('__schedule')" style="${currentLine === '__schedule' ? '' : 'color:#f97316;'}">출하일정<span class="tab-count">${shipCount || ''}</span></div>`;
+  for (const name of lineNames) {
+    html += `<div class="tab ${currentLine === name ? 'active' : ''}" onclick="switchTab('${name}')">
+      ${name}<span class="tab-count" id="tabCount${name}"></span>
+    </div>`;
+  }
+  tabsEl.innerHTML = html;
+}
+
+function switchTab(line) {
+  currentLine = line;
+  buildTabs();
+  render();
+}
+
+function render() {
+  const eqs = Object.values(allEquipment);
+  document.getElementById('emptyCount').textContent = eqs.filter(e => e.status === 'empty').length;
+  document.getElementById('freeCount').textContent = eqs.filter(e => e.status === 'free').length;
+  document.getElementById('occupiedCount').textContent = eqs.filter(e => e.status === 'occupied').length;
+
+  for (const name of lineNames) {
+    const lineEqs = eqs.filter(e => e.line === name);
+    const received = lineEqs.filter(e => e.status !== 'empty').length;
+    const el = document.getElementById(`tabCount${name}`);
+    if (el) el.textContent = `${received}/${lineEqs.length}`;
+  }
+
+  const content = document.getElementById('content');
+  if (currentLine === '__schedule') {
+    content.innerHTML = renderScheduleView(eqs);
+  } else if (currentLine === null) {
+    content.innerHTML = renderOverview(eqs);
+  } else {
+    content.innerHTML = renderLine(eqs.filter(e => e.line === currentLine));
+  }
+}
+
+function renderOverview(eqs) {
+  let html = '<div class="overview">';
+  for (const name of lineNames) {
+    const lineEqs = eqs.filter(e => e.line === name).sort((a, b) => a.number - b.number);
+    const received = lineEqs.filter(e => e.status !== 'empty').length;
+    html += `<div class="overview-line">
+      <h3>${name}라인 — 입고 ${received}/${lineEqs.length}</h3>
+      <div class="overview-grid">`;
+    for (const eq of lineEqs) {
+      const title = eq.status === 'empty' ? '미입고' : `${eq.equipName}${eq.team ? ' · ' + eq.team : ''}`;
+      const sCls = getShipClass(eq);
+      html += `<div class="overview-dot ${eq.status} ${sCls}" onclick="openModal('${eq.id}')" title="${title}">${eq.number}</div>`;
+    }
+    html += `</div></div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderScheduleView(eqs) {
+  const withShip = eqs.filter(e => e.shipDate && e.status !== 'empty');
+  if (!withShip.length) {
+    return '<div class="schedule-view"><div class="schedule-empty">출하 예정 일정이 없습니다.<br>📅 출하 일정 버튼으로 메일 데이터를 가져오세요.</div></div>';
+  }
+  withShip.sort((a, b) => a.shipDate - b.shipDate);
+  const grouped = {};
+  for (const eq of withShip) {
+    const d = new Date(eq.shipDate);
+    const dateKey = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(eq);
+  }
+  let html = '<div class="schedule-view">';
+  for (const [dateKey, items] of Object.entries(grouped)) {
+    const dday = getDday(items[0].shipDate);
+    const dateLabel = new Date(dateKey + 'T00:00:00').toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+    html += `<div class="schedule-date-group">
+      <div class="schedule-date-header">
+        <span>${dateLabel} (${items.length}건)</span>
+        ${dday ? `<span class="dday-tag eq-dday ${dday.cls}">${dday.text}</span>` : ''}
+      </div>
+      <table class="schedule-table">
+        <tr><th>슬롯</th><th>장비명</th><th>Lot No</th><th>출하단계</th><th>Shipment</th><th>검수</th></tr>`;
+    for (const eq of items) {
+      const shipLabel = getShipLabel(eq) || '-';
+      const shipColors = { mail:'#f59e0b', parts:'#3b82f6', nt:'#22c55e', fqc:'#94a3b8', done:'#64748b' };
+      const shipColor = shipColors[eq.shipStage] || '#94a3b8';
+      const preTag = eq.prePackaging ? '<span style="background:#a855f7;color:#fff;font-size:8px;padding:0 3px;border-radius:3px;margin-left:3px;">선</span>' : '';
+      const mfg = eq.mfgInspected ? '<div class="eq-inspect-dot done" title="제조팀 완료"></div>' : '<div class="eq-inspect-dot" title="제조팀 미완"></div>';
+      const fqc = eq.fqcInspected ? '<div class="eq-inspect-dot done" title="FQC 완료"></div>' : '<div class="eq-inspect-dot" title="FQC 미완"></div>';
+      html += `<tr onclick="goToSlot('${eq.id}')">
+        <td class="slot-col">${eq.line}-${eq.number}</td>
+        <td>${eq.equipName || eq.model || '-'}${preTag}</td>
+        <td style="font-size:11px;color:#94a3b8;">${eq.lotNo || '-'}</td>
+        <td><span style="color:${shipColor};font-size:11px;">${shipLabel}</span></td>
+        <td style="font-size:10px;color:#cbd5e1;">${esc(eq.shipment) || '-'}</td>
+        <td><div class="inspect-col">${mfg}${fqc}</div></td>
+      </tr>`;
+    }
+    html += '</table></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function statusLabel(s) {
+  if (s === 'empty') return '미입고';
+  if (s === 'free' || s === 'received') return '비어있음';
+  return '작업중';
+}
+
+function getShipClass(eq) {
+  if (!eq.shipDate || eq.status === 'empty') return '';
+  const stageMap = { mail: 'sh-parts', parts: 'sh-nt', nt: 'sh-fqc', fqc: 'sh-checker', done: 'sh-done' };
+  return stageMap[eq.shipStage] || '';
+}
+
+function getShipLabel(eq) {
+  if (!eq.shipDate || eq.status === 'empty') return '';
+  const labels = { mail: '생산관리 예정', parts: '사전작업 예정', nt: 'FQC 예정', fqc: '출하 예정', done: '출하 완료' };
+  return labels[eq.shipStage] || '';
+}
+
+function renderLine(eqs) {
+  const sorted = eqs.sort((a, b) => a.number - b.number);
+  let html = '<div class="line-view"><div class="grid">';
+  for (const eq of sorted) {
+    const timeStr = eq.since ? getElapsed(eq.since) : '';
+    const dday = getDday(eq.shipDate);
+    const shipCls = getShipClass(eq);
+    const shipLabel = getShipLabel(eq);
+    html += `<div class="eq-card ${eq.status} ${shipCls}" onclick="openModal('${eq.id}')">
+      ${eq.priority ? `<div class="eq-priority">#${eq.priority}</div>` : ''}
+      ${eq.prePackaging ? '<div class="prepack-badge">선</div>' : ''}
+      <div class="eq-number">${eq.number}</div>
+      ${eq.lotNo ? `<div class="eq-name">${eq.lotNo}</div>` : (eq.equipName ? `<div class="eq-name">${eq.equipName}</div>` : '')}
+      <div class="eq-status">${statusLabel(eq.status)}</div>
+      ${eq.team ? `<div class="eq-team">${eq.team}</div>` : ''}
+      ${timeStr ? `<div class="eq-time">${timeStr}</div>` : ''}
+      ${shipLabel ? `<div class="ship-stage-label">${shipLabel}</div>` : ''}
+      ${dday ? `<div class="eq-dday ${dday.cls}">${dday.text}</div>` : ''}
+      ${renderInspectDots(eq)}
+    </div>`;
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function getElapsed(since) {
+  const diff = Math.floor((Date.now() - since) / 1000);
+  if (diff < 60) return `${diff}초`;
+  const min = Math.floor(diff / 60);
+  if (min < 60) return `${min}분`;
+  const hr = Math.floor(min / 60);
+  return `${hr}시간 ${min % 60}분`;
+}
+
+function getDday(shipDate) {
+  if (!shipDate) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const ship = new Date(shipDate); ship.setHours(0,0,0,0);
+  const diff = Math.ceil((ship - today) / (1000 * 60 * 60 * 24));
+  if (diff < 0) return { text: `D+${Math.abs(diff)}`, cls: 'urgent' };
+  if (diff === 0) return { text: 'D-Day', cls: 'urgent' };
+  if (diff <= 2) return { text: `D-${diff}`, cls: 'soon' };
+  return { text: `D-${diff}`, cls: 'normal' };
+}
+
+function renderInspectDots(eq) {
+  if (eq.status === 'empty' || !eq.shipDate) return '';
+  const mfg = eq.mfgInspected ? 'done' : '';
+  const fqc = eq.fqcInspected ? 'done' : '';
+  return `<div class="eq-inspect" title="제조:${mfg?'완료':'미완'} FQC:${fqc?'완료':'미완'}"><div class="eq-inspect-dot ${mfg}"></div><div class="eq-inspect-dot ${fqc}"></div></div>`;
+}
+
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function infoRow(label, value) {
+  if (!value) return '';
+  return `<div class="info-row"><span class="info-label">${esc(label)}</span><span class="info-value">${esc(value)}</span></div>`;
+}
+
+function openModal(eqId) {
+  const eq = allEquipment[eqId];
+  if (!eq) return;
+  const overlay = document.getElementById('modalOverlay');
+  const modal = document.getElementById('modal');
+
+  const dday = getDday(eq.shipDate);
+  const shipDateStr = eq.shipDate ? new Date(eq.shipDate).toLocaleDateString('ko-KR') : null;
+  const detailInfo = (eq.status !== 'empty' && (eq.lotNo || eq.model || eq.vendor || eq.priority || eq.shipDate)) ? `
+    <div class="modal-info">
+      ${infoRow('모델', eq.model)}
+      ${infoRow('Lot No', eq.lotNo)}
+      ${infoRow('협력업체', eq.vendor)}
+      ${infoRow('작업 우선순위', eq.priority ? '#' + eq.priority : null)}
+      ${infoRow('출고 예정일', shipDateStr ? shipDateStr + (dday ? ` (${dday.text})` : '') : null)}
+      ${infoRow('Shipment', eq.shipment)}
+    </div>` : '';
+
+  const shipSection = eq.status !== 'empty' ? `
+    <div style="margin-bottom:12px;">
+      <div class="shipdate-row">
+        <input type="date" class="shipdate-input" id="shipDateInput" value="${eq.shipDate ? (sd => `${sd.getFullYear()}-${String(sd.getMonth()+1).padStart(2,'0')}-${String(sd.getDate()).padStart(2,'0')}`)(new Date(eq.shipDate)) : ''}">
+        <button class="shipdate-set" onclick="setShipDate('${eqId}')">설정</button>
+      </div>
+      <div class="inspect-row">
+        <span class="inspect-label">제조팀 검수</span>
+        <button class="inspect-check ${eq.mfgInspected ? 'done' : ''}" onclick="toggleInspect('${eqId}','mfg')">${eq.mfgInspected ? '✓' : ''}</button>
+      </div>
+      <div class="inspect-row">
+        <span class="inspect-label">FQC 검수</span>
+        <button class="inspect-check ${eq.fqcInspected ? 'done' : ''}" onclick="toggleInspect('${eqId}','fqc')">${eq.fqcInspected ? '✓' : ''}</button>
+      </div>
+    </div>` : '';
+
+  if (eq.status === 'empty') {
+    modal.innerHTML = `
+      <div class="modal-handle"></div>
+      <h2>${eq.line}라인 - ${eq.number}번</h2>
+      <p class="modal-subtitle">장비를 입고하려면 QR 스캔 또는 직접 입력하세요</p>
+      <div id="qr-reader"></div>
+      <button class="qr-scan-btn" id="qrScanBtn" onclick="toggleQrScan('${eqId}')">📷 QR 스캔으로 입고</button>
+      <div class="input-divider">또는 직접 입력</div>
+      <input class="equip-input" id="equipNameInput" type="text" placeholder="장비명 입력 (예: KY8030-2XL)" autocomplete="off">
+      <button class="receive-btn" onclick="receiveEquip('${eqId}')">입고</button>
+      <button class="history-btn" onclick="showHistory('${eqId}')">&#128337; 이력 보기</button>
+      <button class="cancel-btn" onclick="closeModal()">취소</button>
+    `;
+    setTimeout(() => document.getElementById('equipNameInput').focus(), 100);
+  } else if (eq.status === 'free') {
+    modal.innerHTML = `
+      <div class="modal-handle"></div>
+      <h2>${eq.line}라인 - ${eq.number}번</h2>
+      <p class="modal-subtitle">${eq.equipName} · 비어있음</p>
+      ${detailInfo}
+      ${shipSection}
+      <div class="team-grid">
+        ${teams.map(t => `<button class="team-btn" onclick="checkin('${eqId}', '${t}')">${t}</button>`).join('')}
+      </div>
+      <button class="release-btn" onclick="confirmRelease('${eqId}')">출고</button>
+      <button class="history-btn" onclick="showHistory('${eqId}')">&#128337; 이력 보기</button>
+      <button class="cancel-btn" onclick="closeModal()">취소</button>
+    `;
+  } else {
+    const elapsed = eq.since ? getElapsed(eq.since) : '';
+    modal.innerHTML = `
+      <div class="modal-handle"></div>
+      <h2>${eq.line}라인 - ${eq.number}번</h2>
+      <p class="modal-subtitle">${eq.equipName} · ${eq.team} 작업중 ${elapsed ? '· ' + elapsed + ' 경과' : ''}</p>
+      ${detailInfo}
+      ${shipSection}
+      <button class="checkout-btn" onclick="checkout('${eqId}')">작업 완료</button>
+      <button class="history-btn" onclick="showHistory('${eqId}')">&#128337; 이력 보기</button>
+      <button class="cancel-btn" onclick="closeModal()">취소</button>
+    `;
+  }
+  overlay.classList.add('show');
+}
+
+function openImportModal() {
+  const overlay = document.getElementById('modalOverlay');
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-handle"></div>
+    <h2>메일 데이터 가져오기</h2>
+    <p class="modal-subtitle">Outlook 메일의 표 내용을 복사하여 붙여넣기 하세요</p>
+    <textarea class="import-textarea" id="importText" placeholder="D-01	S2605056-1	KY8030-2XL	8월 7일	씨앤	9&#10;E-11	S2606106-1	KY8030-3DL	8월 7일	씨앤	2"></textarea>
+    <button class="receive-btn" onclick="submitImport()">가져오기</button>
+    <div id="importResult"></div>
+    <button class="cancel-btn" onclick="closeModal()">닫기</button>
+  `;
+  overlay.classList.add('show');
+  setTimeout(() => document.getElementById('importText').focus(), 100);
+}
+
+async function submitImport() {
+  const text = document.getElementById('importText').value.trim();
+  if (!text) return;
+  try {
+    const res = await fetch('/api/import-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json();
+    document.getElementById('importResult').innerHTML =
+      `<div class="import-result success">${data.message}</div>`;
+  } catch (err) {
+    document.getElementById('importResult').innerHTML =
+      `<div class="import-result error">오류 발생: ${err.message}</div>`;
+  }
+}
+
+let html5QrCode = null;
+
+function toggleQrScan(eqId) {
+  const btn = document.getElementById('qrScanBtn');
+  const reader = document.getElementById('qr-reader');
+
+  if (html5QrCode) {
+    stopQrScan();
+    return;
+  }
+
+  btn.textContent = '⏹ 스캔 중지';
+  btn.style.borderColor = '#ef4444';
+  btn.style.color = '#ef4444';
+
+  html5QrCode = new Html5Qrcode('qr-reader');
+  html5QrCode.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: { width: 250, height: 250 } },
+    (decodedText) => {
+      const input = document.getElementById('equipNameInput');
+      if (input) input.value = decodedText;
+      stopQrScan();
+      socket.emit('receive', { equipmentId: eqId, equipName: decodedText });
+      closeModal();
+    },
+    () => {}
+  ).catch(err => {
+    reader.innerHTML = `<p style="color:#ef4444;text-align:center;padding:16px;font-size:14px;">카메라를 사용할 수 없습니다.<br>카메라 권한을 허용해주세요.</p>`;
+    btn.textContent = '📷 QR 스캔으로 입고';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    html5QrCode = null;
+  });
+}
+
+function stopQrScan() {
+  if (html5QrCode) {
+    html5QrCode.stop().catch(() => {});
+    html5QrCode = null;
+  }
+  const btn = document.getElementById('qrScanBtn');
+  if (btn) {
+    btn.textContent = '📷 QR 스캔으로 입고';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  }
+  const reader = document.getElementById('qr-reader');
+  if (reader) reader.innerHTML = '';
+}
+
+function closeModal() {
+  stopQrScan();
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function receiveEquip(eqId) {
+  const input = document.getElementById('equipNameInput');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  socket.emit('receive', { equipmentId: eqId, equipName: name });
+  closeModal();
+}
+
+function setShipDate(eqId) {
+  const input = document.getElementById('shipDateInput');
+  if (!input.value) return;
+  const shipDate = new Date(input.value).getTime();
+  socket.emit('setShipDate', { equipmentId: eqId, shipDate });
+  closeModal();
+}
+
+function toggleInspect(eqId, type) {
+  socket.emit('inspect', { equipmentId: eqId, type });
+  setTimeout(() => openModal(eqId), 200);
+}
+
+function confirmRelease(eqId) {
+  const eq = allEquipment[eqId];
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-handle"></div>
+    <h2>${eq.line}라인 - ${eq.number}번 출고</h2>
+    <p class="modal-subtitle">출고 요청자 정보를 입력하세요</p>
+    <input class="equip-input" id="releaseName" type="text" placeholder="이름" autocomplete="off">
+    <input class="equip-input" id="releaseDept" type="text" placeholder="소속 (예: 생산관리팀)" autocomplete="off">
+    <button class="release-btn" onclick="releaseEquip('${eqId}')">출고 확인</button>
+    <button class="cancel-btn" onclick="openModal('${eqId}')">뒤로</button>
+  `;
+  setTimeout(() => document.getElementById('releaseName').focus(), 100);
+}
+
+function releaseEquip(eqId) {
+  const name = document.getElementById('releaseName').value.trim();
+  const dept = document.getElementById('releaseDept').value.trim();
+  if (!name) { document.getElementById('releaseName').focus(); return; }
+  if (!dept) { document.getElementById('releaseDept').focus(); return; }
+  console.log(`출고 요청: ${eqId} / ${dept} ${name}`);
+  socket.emit('release', { equipmentId: eqId, releasedBy: name, releasedDept: dept });
+  closeModal();
+}
+
+function checkin(eqId, team) {
+  socket.emit('checkin', { equipmentId: eqId, team });
+  closeModal();
+}
+
+function checkout(eqId) {
+  socket.emit('checkout', { equipmentId: eqId });
+  closeModal();
+}
+
+const actionIcons = { receive: '입고', release: '출고', checkin: '체크인', checkout: '체크아웃' };
+const actionColors = { receive: 'receive', release: 'release', checkin: 'checkin', checkout: 'checkout' };
+
+function formatLogTime(ts) {
+  const d = new Date(ts);
+  return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatLogDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+}
+
+function renderTimeline(logs) {
+  if (!logs.length) return '<div class="timeline-empty">이력이 없습니다</div>';
+  const sorted = [...logs].sort((a, b) => b.time - a.time);
+  let html = '<div class="timeline">';
+  let lastDate = '';
+  for (const l of sorted) {
+    const dateStr = formatLogDate(l.time);
+    if (dateStr !== lastDate) {
+      lastDate = dateStr;
+      html += `<div class="timeline-date-sep">${dateStr}</div>`;
+    }
+    html += `<div class="timeline-item">
+      <div class="timeline-dot ${actionColors[l.action] || ''}"></div>
+      <div class="timeline-time">${formatLogTime(l.time)}</div>
+      <div class="timeline-content">${actionIcons[l.action] || l.action} — ${l.detail || ''}</div>
+      ${l.userName ? `<div class="timeline-user">${l.userName}</div>` : ''}
+    </div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+async function showHistory(eqId) {
+  const eq = allEquipment[eqId];
+  if (!eq) return;
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-handle"></div>
+    <h2>${eq.line}라인 - ${eq.number}번 이력</h2>
+    <p class="modal-subtitle">이 슬롯의 모든 활동 기록</p>
+    <div id="historyContent" style="max-height:60vh;overflow-y:auto;">
+      <div class="timeline-empty">로딩 중...</div>
+    </div>
+    <button class="cancel-btn" onclick="openModal('${eqId}')">뒤로</button>
+  `;
+  try {
+    const res = await fetch('/api/history/' + eqId, { headers: { 'Authorization': 'Bearer ' + authToken } });
+    const data = await res.json();
+    document.getElementById('historyContent').innerHTML = renderTimeline(data);
+  } catch(e) {
+    document.getElementById('historyContent').innerHTML = '<div class="timeline-empty">이력을 불러올 수 없습니다</div>';
+  }
+}
+
+function openSearchModal() {
+  const overlay = document.getElementById('modalOverlay');
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `
+    <div class="modal-handle"></div>
+    <h2>장비 검색</h2>
+    <p class="modal-subtitle">장비명, Lot No 등으로 검색하세요</p>
+    <div class="search-input-wrap">
+      <input id="searchInput" type="text" placeholder="예: S2605319, KY8030" autocomplete="off">
+      <button onclick="doSearch()">검색</button>
+    </div>
+    <div id="searchResults" style="max-height:55vh;overflow-y:auto;-webkit-overflow-scrolling:touch;"></div>
+    <button class="cancel-btn" onclick="closeModal()">닫기</button>
+  `;
+  overlay.classList.add('show');
+  setTimeout(() => {
+    const input = document.getElementById('searchInput');
+    input.focus();
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') doSearch(); });
+  }, 100);
+}
+
+async function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  const resultsEl = document.getElementById('searchResults');
+  resultsEl.innerHTML = '<div class="timeline-empty">검색 중...</div>';
+  try {
+    const res = await fetch('/api/history/search?q=' + encodeURIComponent(q), { headers: { 'Authorization': 'Bearer ' + authToken } });
+    const grouped = await res.json();
+    const keys = Object.keys(grouped);
+    if (!keys.length) {
+      resultsEl.innerHTML = '<div class="timeline-empty">검색 결과가 없습니다</div>';
+      return;
+    }
+    let html = '';
+    for (const eqId of keys) {
+      const logs = grouped[eqId];
+      const eq = allEquipment[eqId];
+      const slotLabel = eq ? `${eq.line}라인 ${eq.number}번` : eqId;
+      const lastEquipName = logs.reduce((name, l) => l.equipName || name, '');
+      html += `<div class="search-group">
+        <div class="search-group-title" onclick="goToSlot('${eqId}')">
+          ${slotLabel} — ${lastEquipName || ''}
+          <span class="slot-link">바로가기 &#8594;</span>
+        </div>
+        ${renderTimeline(logs)}
+      </div>`;
+    }
+    resultsEl.innerHTML = html;
+  } catch(e) {
+    resultsEl.innerHTML = '<div class="timeline-empty">검색 오류</div>';
+  }
+}
+
+function openShipScheduleModal(tab) {
+  const overlay = document.getElementById('modalOverlay');
+  const modal = document.getElementById('modal');
+  const activeTab = tab || 'outlook';
+  modal.innerHTML = `
+    <div class="modal-handle"></div>
+    <h2>출하 일정 가져오기</h2>
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button class="team-btn" style="flex:1;padding:10px;font-size:13px;${activeTab==='outlook'?'border-color:#3b82f6;background:#3b82f620;color:#3b82f6;':''}" onclick="openShipScheduleModal('outlook')">Outlook 연동</button>
+      <button class="team-btn" style="flex:1;padding:10px;font-size:13px;${activeTab==='paste'?'border-color:#3b82f6;background:#3b82f620;color:#3b82f6;':''}" onclick="openShipScheduleModal('paste')">직접 붙여넣기</button>
+      <button class="team-btn" style="flex:1;padding:10px;font-size:13px;${activeTab==='settings'?'border-color:#3b82f6;background:#3b82f620;color:#3b82f6;':''}" onclick="openShipScheduleModal('settings')">설정</button>
+    </div>
+    <div id="shipTabContent"></div>
+    <button class="cancel-btn" onclick="closeModal()">닫기</button>
+  `;
+  overlay.classList.add('show');
+  if (activeTab === 'outlook') renderOutlookTab();
+  else if (activeTab === 'paste') renderPasteTab();
+  else if (activeTab === 'settings') renderSettingsTab();
+}
+
+async function renderOutlookTab() {
+  const el = document.getElementById('shipTabContent');
+  el.innerHTML = '<div class="timeline-empty">상태 확인 중...</div>';
+  try {
+    const res = await fetch('/api/graph/status', { headers: { 'Authorization': 'Bearer ' + authToken } });
+    const status = await res.json();
+    if (status.connected) {
+      const lastStr = status.lastChecked ? new Date(status.lastChecked).toLocaleString('ko-KR') : '없음';
+      el.innerHTML = `
+        <div style="padding:12px 14px;background:#22c55e15;border:1px solid #22c55e40;border-radius:10px;margin-bottom:12px;">
+          <span style="color:#22c55e;font-weight:700;">● Microsoft 연결됨</span>
+          <span style="color:#94a3b8;font-size:12px;margin-left:8px;">마지막 확인: ${lastStr}</span>
+        </div>
+        <button class="receive-btn" style="background:#3b82f6;" onclick="checkOutlookEmails()">지금 메일 확인</button>
+        <button class="receive-btn" style="background:#ef4444;margin-top:8px;" onclick="disconnectOutlook()">연결 해제</button>
+        <div id="outlookResult" style="margin-top:12px;"></div>
+        <p style="color:#64748b;font-size:11px;margin-top:12px;">* 5분마다 자동으로 새 메일을 확인합니다</p>
+      `;
+    } else {
+      el.innerHTML = `
+        <div style="padding:12px 14px;background:#ef444415;border:1px solid #ef444440;border-radius:10px;margin-bottom:12px;">
+          <span style="color:#ef4444;font-weight:700;">● 미연결</span>
+          <span style="color:#94a3b8;font-size:12px;margin-left:8px;">${status.reason}</span>
+        </div>
+        ${status.reason === '설정 필요'
+          ? '<p style="color:#94a3b8;font-size:13px;">먼저 <b>설정</b> 탭에서 앱 정보를 입력해주세요.</p>'
+          : '<button class="receive-btn" style="background:#3b82f6;" onclick="loginMicrosoft()">Microsoft 로그인</button>'}
+        <div id="outlookResult" style="margin-top:12px;"></div>
+      `;
+    }
+  } catch(e) {
+    el.innerHTML = '<div class="import-result error">상태 확인 실패: ' + e.message + '</div>';
+  }
+}
+
+async function loginMicrosoft() {
+  try {
+    const res = await fetch('/api/graph/login', { headers: { 'Authorization': 'Bearer ' + authToken } });
+    const data = await res.json();
+    if (!res.ok) { alert(data.error); return; }
+    window.open(data.url, 'msLogin', 'width=600,height=700');
+    document.getElementById('outlookResult').innerHTML = '<div class="import-result success">로그인 창이 열렸습니다. 로그인 완료 후 이 창으로 돌아오세요.</div>';
+  } catch(e) { alert('오류: ' + e.message); }
+}
+
+async function disconnectOutlook() {
+  if (!confirm('Outlook 연결을 해제하시겠습니까?')) return;
+  try {
+    await fetch('/api/graph/disconnect', { method:'POST', headers:{'Authorization':'Bearer '+authToken} });
+    renderOutlookTab();
+  } catch(e) { alert('오류: ' + e.message); }
+}
+
+async function checkOutlookEmails() {
+  const el = document.getElementById('outlookResult');
+  el.innerHTML = '<div class="timeline-empty">메일 확인 중...</div>';
+  try {
+    const res = await fetch('/api/graph/check-emails', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + authToken },
+    });
+    const data = await res.json();
+    if (!res.ok) { el.innerHTML = '<div class="import-result error">' + data.error + '</div>'; return; }
+    let html = '';
+    if (data.subject) {
+      html += '<div style="background:#1e293b;padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:12px;">';
+      html += '<div style="color:#e2e8f0;font-weight:600;">📧 ' + data.subject + '</div>';
+      html += '<div style="color:#94a3b8;margin-top:4px;">보낸사람: ' + (data.from||'') + ' | ' + new Date(data.receivedAt).toLocaleString('ko-KR') + '</div>';
+      if (data.debugHtmlLength !== undefined) {
+        html += '<div style="color:#f59e0b;margin-top:4px;">HTML 본문 길이: ' + data.debugHtmlLength + '자 — 표(&lt;table&gt;)가 없는 메일일 수 있습니다</div>';
+      }
+      html += '</div>';
+    }
+    html += '<div class="import-result ' + (data.matched?.length > 0 ? 'success' : 'error') + '" style="margin-bottom:8px;">' + (data.message || '완료') + '</div>';
+    if (data.matched?.length > 0) {
+      html += '<div style="max-height:150px;overflow-y:auto;font-size:12px;">';
+      for (const m of data.matched) {
+        html += '<div style="padding:3px 0;border-bottom:1px solid #1e293b;">' + m.slot + ' — ' + (m.equipName||'') + ' → ' + m.shipDate + '</div>';
+      }
+      html += '</div>';
+    }
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = '<div class="import-result error">오류: ' + e.message + '</div>';
+  }
+}
+
+function renderPasteTab() {
+  const el = document.getElementById('shipTabContent');
+  el.innerHTML = `
+    <p class="modal-subtitle" style="margin-bottom:12px;">출하검사 계획 메일의 상세 표를 복사하여 붙여넣기 하세요</p>
+    <textarea class="import-textarea" id="shipScheduleText" style="height:140px;" placeholder="메일의 상세 표를 선택 → 복사(Ctrl+C) → 여기에 붙여넣기(Ctrl+V)"></textarea>
+    <button class="receive-btn" style="background:#f97316;" onclick="submitShipSchedule()">일정 적용</button>
+    <div id="shipScheduleResult"></div>
+  `;
+  setTimeout(() => document.getElementById('shipScheduleText')?.focus(), 100);
+}
+
+async function renderSettingsTab() {
+  const el = document.getElementById('shipTabContent');
+  el.innerHTML = '<div class="timeline-empty">설정 로드 중...</div>';
+  try {
+    const res = await fetch('/api/graph/config', { headers: { 'Authorization': 'Bearer ' + authToken } });
+    const config = await res.json();
+    el.innerHTML = `
+      <p style="color:#94a3b8;font-size:12px;margin-bottom:12px;">Microsoft Entra 앱 등록 정보를 입력하세요. <a href="https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade" target="_blank" style="color:#3b82f6;">앱 등록 바로가기</a></p>
+      <input class="equip-input" id="graphClientId" placeholder="Client ID (애플리케이션 ID)" value="${config.clientId || ''}" style="font-size:13px;">
+      <input class="equip-input" id="graphTenantId" placeholder="Tenant ID (디렉터리 ID)" value="${config.tenantId || ''}" style="font-size:13px;">
+      <input class="equip-input" id="graphClientSecret" type="password" placeholder="Client Secret (클라이언트 암호)" value="${config.clientSecret === '••••••' ? '' : ''}" style="font-size:13px;">
+      ${config.clientSecret === '••••••' ? '<p style="color:#64748b;font-size:11px;margin:-4px 0 8px;">* 이미 설정됨. 변경 시에만 다시 입력하세요.</p>' : ''}
+      <button class="receive-btn" style="background:#3b82f6;" onclick="saveGraphConfig()">설정 저장</button>
+      <div id="settingsResult"></div>
+      <div style="margin-top:16px;padding:12px;background:#0f172a;border-radius:8px;font-size:11px;color:#64748b;">
+        <b style="color:#94a3b8;">앱 등록 가이드:</b><br>
+        1. entra.microsoft.com → 앱 등록 → 새 등록<br>
+        2. 리디렉션 URI: <b>https://localhost:3443/auth/callback</b> (웹)<br>
+        3. API 권한 → Microsoft Graph → Mail.Read (위임됨) 추가<br>
+        4. 인증서 및 암호 → 새 클라이언트 암호 추가<br>
+        5. 위 값들을 여기에 입력 후 저장
+      </div>
+    `;
+  } catch(e) {
+    el.innerHTML = '<div class="import-result error">설정 로드 실패</div>';
+  }
+}
+
+async function saveGraphConfig() {
+  const clientId = document.getElementById('graphClientId').value.trim();
+  const tenantId = document.getElementById('graphTenantId').value.trim();
+  const clientSecret = document.getElementById('graphClientSecret').value.trim();
+  const el = document.getElementById('settingsResult');
+  if (!clientId || !tenantId) { el.innerHTML = '<div class="import-result error">Client ID와 Tenant ID는 필수입니다</div>'; return; }
+  const body = { clientId, tenantId };
+  if (clientSecret) body.clientSecret = clientSecret;
+  else {
+    const existing = await fetch('/api/graph/config', { headers: { 'Authorization': 'Bearer ' + authToken } }).then(r => r.json());
+    if (existing.clientSecret !== '••••••') { el.innerHTML = '<div class="import-result error">Client Secret을 입력해주세요</div>'; return; }
+    body.clientSecret = '__keep__';
+  }
+  try {
+    const res = await fetch('/api/graph/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    el.innerHTML = '<div class="import-result ' + (res.ok ? 'success' : 'error') + '">' + (data.message || data.error) + '</div>';
+  } catch(e) { el.innerHTML = '<div class="import-result error">저장 실패</div>'; }
+}
+
+async function submitShipSchedule() {
+  const text = document.getElementById('shipScheduleText').value.trim();
+  if (!text) return;
+  const resultEl = document.getElementById('shipScheduleResult');
+  resultEl.innerHTML = '<div class="timeline-empty">처리 중...</div>';
+  try {
+    const res = await fetch('/api/import-shipping-schedule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json();
+    if (!res.ok) { resultEl.innerHTML = '<div class="import-result error">' + (data.error || '오류') + '</div>'; return; }
+    let html = '';
+    if (data.matched.length > 0) {
+      html += '<div class="import-result success" style="margin-bottom:12px;">✓ ' + data.matched.length + '건 출하 예정일 설정 완료</div>';
+      html += '<div style="max-height:180px;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;">';
+      html += '<table style="width:100%;font-size:12px;border-collapse:collapse;color:#e2e8f0;">';
+      html += '<tr style="border-bottom:1px solid #334155;"><th style="text-align:left;padding:4px 6px;">슬롯</th><th style="text-align:left;padding:4px 6px;">장비</th><th style="text-align:left;padding:4px 6px;">출하일</th><th style="text-align:left;padding:4px 6px;">매칭</th></tr>';
+      for (const m of data.matched) {
+        html += '<tr style="border-bottom:1px solid #1e293b;"><td style="padding:4px 6px;">' + m.slot + '</td><td style="padding:4px 6px;">' + (m.equipName||'') + '</td><td style="padding:4px 6px;">' + m.shipDate + '</td><td style="padding:4px 6px;color:#3b82f6;">' + m.matchMethod + '</td></tr>';
+      }
+      html += '</table></div>';
+    }
+    if (data.unmatched.length > 0) {
+      html += '<div class="import-result error" style="margin-bottom:12px;">⚠ ' + data.unmatched.length + '건 미매칭 (입고되지 않은 장비)</div>';
+      html += '<div style="max-height:120px;overflow-y:auto;-webkit-overflow-scrolling:touch;">';
+      html += '<table style="width:100%;font-size:11px;border-collapse:collapse;color:#94a3b8;">';
+      html += '<tr style="border-bottom:1px solid #334155;"><th style="text-align:left;padding:3px 6px;">Tracking#</th><th style="text-align:left;padding:3px 6px;">모델</th><th style="text-align:left;padding:3px 6px;">라인</th><th style="text-align:left;padding:3px 6px;">출하일</th></tr>';
+      for (const u of data.unmatched) {
+        html += '<tr style="border-bottom:1px solid #1e293b;"><td style="padding:3px 6px;">' + u.trackingNo + '</td><td style="padding:3px 6px;">' + u.modelName + '</td><td style="padding:3px 6px;">' + u.lineNo + '</td><td style="padding:3px 6px;">' + u.shipDate + '</td></tr>';
+      }
+      html += '</table></div>';
+    }
+    if (data.matched.length === 0 && data.unmatched.length === 0) {
+      html = '<div class="import-result error">파싱 가능한 데이터가 없습니다. 표 전체를 복사했는지 확인해주세요.</div>';
+    }
+    resultEl.innerHTML = html;
+  } catch(e) {
+    resultEl.innerHTML = '<div class="import-result error">오류: ' + e.message + '</div>';
+  }
+}
+
+function goToSlot(eqId) {
+  const eq = allEquipment[eqId];
+  if (!eq) return;
+  closeModal();
+  switchTab(eq.line);
+  setTimeout(() => openModal(eqId), 300);
+}
+
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+setInterval(() => { render(); }, 30000);
+
+</script>
+
+</body>
+</html>

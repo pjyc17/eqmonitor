@@ -141,3 +141,29 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# ── 프로젝트 전용 ──
+# 인증/토큰
+graph-config.json
+graph-tokens.json
+graph-state.json
+cert.pem
+key.pem
+
+# 운영 데이터
+data.json
+cameras.json
+users.json
+sessions.json
+log-*.json
+log.json.migrated
+notifications.json
+parsed-schedule.json
+snapshot-*.json
+webhook.json
+report-config.json
+
+# 스냅샷/엑셀
+snapshots/
+*.xlsx
+~$*

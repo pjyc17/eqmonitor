@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>일별 출하/취소 그래프</title>
+<style>
+  :root {
+    --surface: #fcfcfb;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #9b9a94;
+    --grid: #e8e8e4;
+    --series-done: #2a78d6;
+    --series-cancel: #eb6834;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --surface: #1a1a19;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #7a7968;
+      --grid: #2e2e2b;
+      --series-done: #3987e5;
+      --series-cancel: #d95926;
+    }
+  }
+  :root[data-theme="dark"] {
+    --surface: #1a1a19;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #7a7968;
+    --grid: #2e2e2b;
+    --series-done: #3987e5;
+    --series-cancel: #d95926;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Malgun Gothic', sans-serif;
+    background: var(--surface);
+    color: var(--text-primary);
+    padding: 32px;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+  .chart-wrap {
+    position: relative;
+    overflow-x: auto;
+  }
+  canvas { display: block; }
+  #tooltip {
+    position: absolute;
+    display: none;
+    background: var(--text-primary);
+    color: var(--surface);
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+<h1>일별 출하 · 취소 대수</h1>
+<div class="subtitle">최근 30일</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--series-done);"></div><span>출하 완료</span></div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--series-cancel);"></div><span>취소</span></div>
+</div>
+<div class="chart-wrap">
+  <canvas id="chart" width="860" height="340"></canvas>
+  <div id="tooltip"></div>
+</div>
+
+<script>
+const DATA = [{"date":"2026-07-16","done":0,"cancel":0},{"date":"2026-07-17","done":0,"cancel":0},{"date":"2026-07-18","done":0,"cancel":0},{"date":"2026-07-19","done":0,"cancel":0},{"date":"2026-07-20","done":0,"cancel":0},{"date":"2026-07-21","done":0,"cancel":0},{"date":"2026-07-22","done":0,"cancel":0},{"date":"2026-07-23","done":0,"cancel":0},{"date":"2026-07-24","done":0,"cancel":0},{"date":"2026-07-25","done":0,"cancel":0},{"date":"2026-07-26","done":0,"cancel":0},{"date":"2026-07-27","done":0,"cancel":0},{"date":"2026-07-28","done":0,"cancel":0},{"date":"2026-07-29","done":0,"cancel":0},{"date":"2026-07-30","done":0,"cancel":0},{"date":"2026-07-31","done":0,"cancel":0},{"date":"2026-08-01","done":0,"cancel":0},{"date":"2026-08-02","done":0,"cancel":0},{"date":"2026-08-03","done":0,"cancel":0},{"date":"2026-08-04","done":0,"cancel":0},{"date":"2026-08-05","done":0,"cancel":0},{"date":"2026-08-06","done":0,"cancel":0},{"date":"2026-08-07","done":0,"cancel":0},{"date":"2026-08-08","done":0,"cancel":0},{"date":"2026-08-09","done":0,"cancel":0},{"date":"2026-08-10","done":0,"cancel":0},{"date":"2026-08-11","done":0,"cancel":0},{"date":"2026-08-12","done":1,"cancel":3},{"date":"2026-08-13","done":30,"cancel":44},{"date":"2026-08-14","done":0,"cancel":0}];
+
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+const dpr = window.devicePixelRatio || 1;
+canvas.width = 860 * dpr;
+canvas.height = 340 * dpr;
+canvas.style.width = '860px';
+canvas.style.height = '340px';
+ctx.scale(dpr, dpr);
+
+const W = 860, H = 340;
+const pad = { top: 16, right: 20, bottom: 52, left: 40 };
+const plotW = W - pad.left - pad.right;
+const plotH = H - pad.top - pad.bottom;
+
+const maxVal = Math.max(...DATA.map(d => Math.max(d.done, d.cancel)), 1);
+const yMax = Math.ceil(maxVal / 5) * 5 || 5;
+
+function getCSS(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+function draw() {
+  const surface = getCSS('--surface');
+  const textPrimary = getCSS('--text-primary');
+  const textMuted = getCSS('--text-muted');
+  const grid = getCSS('--grid');
+  const colDone = getCSS('--series-done');
+  const colCancel = getCSS('--series-cancel');
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Y grid
+  const ySteps = 5;
+  ctx.font = '11px -apple-system, Malgun Gothic, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (let i = 0; i <= ySteps; i++) {
+    const val = Math.round(yMax / ySteps * i);
+    const y = pad.top + plotH - (plotH * i / ySteps);
+    ctx.strokeStyle = grid;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.fillStyle = textMuted;
+    ctx.fillText(val, pad.left - 8, y);
+  }
+
+  // Bars
+  const n = DATA.length;
+  const groupW = plotW / n;
+  const barW = Math.max(2, (groupW - 6) / 2);
+  const gap = 2;
+
+  DATA.forEach((d, i) => {
+    const x = pad.left + i * groupW + (groupW - barW * 2 - gap) / 2;
+    const hDone = (d.done / yMax) * plotH;
+    const hCancel = (d.cancel / yMax) * plotH;
+    const yBase = pad.top + plotH;
+
+    // done bar
+    if (hDone > 0) {
+      ctx.fillStyle = colDone;
+      ctx.beginPath();
+      const bx = x, by = yBase - hDone, bw = barW, bh = hDone;
+      const r = Math.min(4, bw / 2, bh);
+      ctx.moveTo(bx + r, by);
+      ctx.lineTo(bx + bw - r, by);
+      ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
+      ctx.lineTo(bx + bw, by + bh);
+      ctx.lineTo(bx, by + bh);
+      ctx.lineTo(bx, by + r);
+      ctx.quadraticCurveTo(bx, by, bx + r, by);
+      ctx.fill();
+    }
+
+    // cancel bar
+    if (hCancel > 0) {
+      ctx.fillStyle = colCancel;
+      ctx.beginPath();
+      const bx = x + barW + gap, by = yBase - hCancel, bw = barW, bh = hCancel;
+      const r = Math.min(4, bw / 2, bh);
+      ctx.moveTo(bx + r, by);
+      ctx.lineTo(bx + bw - r, by);
+      ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + r);
+      ctx.lineTo(bx + bw, by + bh);
+      ctx.lineTo(bx, by + bh);
+      ctx.lineTo(bx, by + r);
+      ctx.quadraticCurveTo(bx, by, bx + r, by);
+      ctx.fill();
+    }
+
+    // X labels (every 5th or if has data)
+    if (i % 5 === 0 || d.done > 0 || d.cancel > 0) {
+      ctx.fillStyle = textMuted;
+      ctx.textAlign = 'center';
+      ctx.font = '10px -apple-system, Malgun Gothic, sans-serif';
+      const label = d.date.slice(5);
+      ctx.fillText(label, pad.left + i * groupW + groupW / 2, pad.top + plotH + 16);
+    }
+  });
+
+  // Direct labels for non-zero bars
+  ctx.font = '11px -apple-system, Malgun Gothic, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  DATA.forEach((d, i) => {
+    const x = pad.left + i * groupW + (groupW - barW * 2 - gap) / 2;
+    if (d.done > 0) {
+      ctx.fillStyle = colDone;
+      const hDone = (d.done / yMax) * plotH;
+      ctx.fillText(d.done, x + barW / 2, pad.top + plotH - hDone - 4);
+    }
+    if (d.cancel > 0) {
+      ctx.fillStyle = colCancel;
+      const hCancel = (d.cancel / yMax) * plotH;
+      ctx.fillText(d.cancel, x + barW + gap + barW / 2, pad.top + plotH - hCancel - 4);
+    }
+  });
+}
+
+draw();
+
+// Tooltip
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const n = DATA.length;
+  const groupW = plotW / n;
+  const idx = Math.floor((mx - pad.left) / groupW);
+
+  if (idx >= 0 && idx < n && mx >= pad.left && mx <= W - pad.right && my >= pad.top && my <= pad.top + plotH) {
+    const d = DATA[idx];
+    tooltip.style.display = 'block';
+    tooltip.innerHTML = `${d.date}<br>출하: ${d.done}건 · 취소: ${d.cancel}건`;
+    tooltip.style.left = (mx + 12) + 'px';
+    tooltip.style.top = (my - 10) + 'px';
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+canvas.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+
+// Theme change
+new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+</script>
+</body>
+</html>
