@@ -636,6 +636,7 @@ function detectHeader(cols) {
     else if (/s.?n/i.test(c) && !('sn' in map)) map.sn = i;
     else if (/customer|고객/i.test(c)) map.customer = i;
     else if (/^line$/i.test(c) || /라인/i.test(c)) map.line = i;
+    else if (/제조/.test(c)) map.mfg = i;
     else if (/fqc/i.test(c)) map.fqc = i;
     else if (/선포장/.test(c)) map.prePack = i;
   }
@@ -671,7 +672,7 @@ function parseShippingSchedule(text, shipDateOverride, opts) {
     if (/^No\.?$/i.test(cols[0])) continue;
     if (!/^\d+$/.test(cols[0])) continue;
 
-    let shipDate, trackingNo = '', modelName = '', lineSlot = null, fqcPerson = '', prePackaging = false, snName = '';
+    let shipDate, trackingNo = '', modelName = '', lineSlot = null, fqcPerson = '', mfgPerson = '', prePackaging = false, snName = '';
 
     if (headerMap) {
       shipDate = shipDateOverride ? new Date(shipDateOverride) : new Date();
@@ -679,6 +680,7 @@ function parseShippingSchedule(text, shipDateOverride, opts) {
       modelName = headerMap.customer !== undefined ? (cols[headerMap.customer] || '') : '';
       snName = headerMap.sn !== undefined ? (cols[headerMap.sn] || '') : '';
       fqcPerson = cols[headerMap.fqc] || '';
+      mfgPerson = headerMap.mfg !== undefined ? (cols[headerMap.mfg] || '') : '';
       const lineCol = cols[headerMap.line] || '';
       const m = lineCol.match(/^([A-Z]{1,2})-(\d+)$/);
       if (m) lineSlot = { line: m[1], slot: parseInt(m[2], 10) };
@@ -707,7 +709,7 @@ function parseShippingSchedule(text, shipDateOverride, opts) {
 
     results.total++;
 
-    const parsedItem = { trackingNo, snName, modelName, fqcPerson, prePackaging, shipDate: shipDate.getTime(), lineSlot };
+    const parsedItem = { trackingNo, snName, modelName, fqcPerson, mfgPerson, prePackaging, shipDate: shipDate.getTime(), lineSlot };
     results.parsed.push(parsedItem);
 
     if (dryRun) continue;
@@ -744,6 +746,7 @@ function parseShippingSchedule(text, shipDateOverride, opts) {
       matchedEq.shipDate = shipDate.getTime();
       matchedEq.shipStage = 'mail';
       if (fqcPerson) matchedEq.model = fqcPerson;
+      if (mfgPerson) matchedEq.mfgPerson = mfgPerson;
       matchedEq.prePackaging = prePackaging;
       io.emit('update', matchedEq);
       results.matched.push({
@@ -857,6 +860,7 @@ app.post('/api/import-shipping-schedule', superOnly, (req, res) => {
       matchedEq.shipDate = item.shipDate;
       matchedEq.shipStage = 'mail';
       if (item.fqcPerson) matchedEq.model = item.fqcPerson;
+      if (item.mfgPerson) matchedEq.mfgPerson = item.mfgPerson;
       matchedEq.prePackaging = true;
       io.emit('update', matchedEq);
       results.matched.push({ slot: `${matchedEq.line}라인 ${matchedEq.number}번`, equipName: matchedEq.equipName || '-', trackingNo: item.trackingNo, prePackaging: true });
@@ -976,6 +980,7 @@ async function checkShippingEmails(user, keyword) {
         matchedEq.shipDate = item.shipDate;
         matchedEq.shipStage = 'mail';
         if (item.fqcPerson) matchedEq.model = item.fqcPerson;
+        if (item.mfgPerson) matchedEq.mfgPerson = item.mfgPerson;
         if (item.shipment) matchedEq.shipment = item.shipment;
         matchedEq.prePackaging = true;
         io.emit('update', matchedEq);
@@ -1061,7 +1066,7 @@ function clearCompletedEquipment() {
     eq.prePackaging = false;
     eq.mfgInspected = false;
     eq.fqcInspected = false;
-    eq.shipment = null;
+    eq.shipment = null; eq.mfgPerson = null;
     io.emit('update', eq);
   }
 
@@ -1195,11 +1200,11 @@ async function applyMidnightSchedule() {
         eq.status = 'empty'; eq.equipName = null; eq.lotNo = null; eq.model = null; eq.vendor = null;
         eq.priority = null; eq.team = null; eq.since = null; eq.receivedAt = null;
         eq.shipDate = null; eq.shipStage = null; eq.shipCanceled = false; eq.canceledAt = null; eq.prePackaging = false;
-        eq.mfgInspected = false; eq.fqcInspected = false; eq.shipment = null;
+        eq.mfgInspected = false; eq.fqcInspected = false; eq.shipment = null; eq.mfgPerson = null;
       } else {
         const label = stageLabels[eq.shipStage] || '출하예정';
         incomplete.push(`${eq.line}-${eq.number} (${eq.equipName || '-'}, ${label})`);
-        eq.shipDate = null; eq.shipStage = null; eq.shipCanceled = false; eq.canceledAt = null; eq.prePackaging = false; eq.shipment = null;
+        eq.shipDate = null; eq.shipStage = null; eq.shipCanceled = false; eq.canceledAt = null; eq.prePackaging = false; eq.shipment = null; eq.mfgPerson = null;
       }
       io.emit('update', eq);
     }
@@ -1236,6 +1241,7 @@ async function applyMidnightSchedule() {
         matchedEq.shipDate = item.shipDate;
         matchedEq.shipStage = 'mail';
         if (item.fqcPerson) matchedEq.model = item.fqcPerson;
+        if (item.mfgPerson) matchedEq.mfgPerson = item.mfgPerson;
         if (item.shipment) matchedEq.shipment = item.shipment;
         matchedEq.prePackaging = false;
         io.emit('update', matchedEq);
@@ -2030,7 +2036,7 @@ io.on('connection', (socket) => {
     eq.prePackaging = false;
     eq.mfgInspected = false;
     eq.fqcInspected = false;
-    eq.shipment = null;
+    eq.shipment = null; eq.mfgPerson = null;
     io.emit('update', eq);
     saveData();
     const u = socket.user;
@@ -2277,7 +2283,7 @@ io.on('connection', (socket) => {
       eq.status = 'empty'; eq.equipName = null; eq.lotNo = null; eq.model = null;
       eq.vendor = null; eq.priority = null; eq.team = null; eq.since = null;
       eq.receivedAt = null; eq.shipDate = null; eq.shipStage = null; eq.shipCanceled = false; eq.canceledAt = null;
-      eq.prePackaging = false; eq.mfgInspected = false; eq.fqcInspected = false; eq.shipment = null;
+      eq.prePackaging = false; eq.mfgInspected = false; eq.fqcInspected = false; eq.shipment = null; eq.mfgPerson = null;
       io.emit('update', eq);
       saveData();
       addLog('stage', u.id, u.name, `${eq.line}라인 ${eq.number}번 비우기 (${prevName})`, { equipmentId: eq.id, equipName: prevName, line: eq.line, slotNumber: eq.number });

@@ -167,10 +167,10 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',sans-serif; }
 }
 
 .cam-cell {
-  position:absolute; width:58px; height:32px; border-radius:4px;
+  position:absolute; width:58px; height:38px; border-radius:4px;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   font-size:11px; font-weight:700; cursor:pointer; transition:transform 0.1s;
-  border:1px solid transparent; line-height:1;
+  border:1px solid transparent; line-height:1.2; gap:1px;
 }
 .cam-cell:hover { transform:scale(1.2); z-index:10; }
 .cam-green { background:#22c55e40; color:#22c55e; border-color:#22c55e; }
@@ -183,6 +183,16 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',sans-serif; }
   position:absolute; font-size:9px; color:#64748b; font-weight:600;
   letter-spacing:1px; text-align:center;
 }
+
+.flip-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:22px; height:18px; border-radius:3px;
+  font-size:13px; cursor:pointer; border:1px solid #334155;
+  background:#1e293b; color:#64748b; transition:all 0.15s;
+  user-select:none; line-height:1; margin-left:auto;
+}
+.flip-btn:hover { background:#334155; color:#94a3b8; }
+.flip-btn.active { background:#3b82f630; color:#3b82f6; border-color:#3b82f6; }
 
 .section-label {
   position:absolute; font-size:9px; color:#475569; font-weight:600;
@@ -644,10 +654,6 @@ function buildMap() {
   map.style.height = MAP_H + 'px';
   var html = '';
 
-  for (var r = 1; r <= 25; r++) {
-    html += '<div class="row-num" style="left:2px;top:' + (LH + (r-1)*RS) + 'px;">' + r + '</div>';
-  }
-
   var secLabels = [
     {text:'A ~ E', x:S1, w:5*CS},
     {text:'F ~ I', x:S2, w:4*CS},
@@ -655,38 +661,8 @@ function buildMap() {
   ];
   for (var i = 0; i < secLabels.length; i++) {
     var sl = secLabels[i];
-    html += '<div class="section-label" style="left:' + sl.x + 'px;top:-14px;width:' + sl.w + 'px;text-align:center;">' + sl.text + '</div>';
-  }
-
-  var drawnLabels = {};
-  for (var li = 0; li < LINES.length; li++) {
-    var line = LINES[li];
-    var labelKey = line.n + '_' + line.roff;
-    if (!drawnLabels[labelKey]) {
-      var labelY = line.roff === 0 ? 0 : line.roff * RS;
-      html += '<div class="line-label' + (line.roff > 0 ? ' sub' : '') + '" style="left:' + line.x + 'px;top:' + labelY + 'px;">' + line.n + '</div>';
-      drawnLabels[labelKey] = true;
-    }
-
-    for (var s = line.start; s <= line.end; s++) {
-      var id = eqId(line.n, s);
-      var cy = LH + (line.roff + (s - line.start)) * RS;
-      var e = eq[id];
-      var cls = getCls(e);
-
-      var hasPrePack = e && e.prePackaging;
-      var cellLabel = line.n + '-' + s;
-      html += '<div class="' + cls + '" style="left:' + line.x + 'px;top:' + cy + 'px;" data-id="' + id + '" data-s="' + s + '" data-label="' + cellLabel + '">';
-      var isDone = e && e.shipStage === 'done';
-      if (isDone) html += '<span class="badge-done">&#10003;</span>';
-      if (hasPrePack) html += '<span class="badge-prepack">선</span>';
-      if (e && e.shipCanceled && e.canceledAt) {
-        var cd = Math.floor((Date.now() - e.canceledAt) / 86400000);
-        if (cd > 0) html += '<span class="badge-cancel-day">D+' + cd + '</span>';
-      }
-      html += cellLabel;
-      html += '</div>';
-    }
+    var slX = layoutFlipH ? (MAP_W - sl.x - sl.w) : sl.x;
+    html += '<div class="section-label" style="left:' + slX + 'px;top:-6px;width:' + sl.w + 'px;text-align:center;">' + sl.text + '</div>';
   }
 
   if (currentUser && (currentUser.dept === '산업품질2팀' || currentUser.dept === '엔티' || currentUser.id === 'pjyc17')) {
@@ -711,6 +687,56 @@ function buildMap() {
     }
   }
 
+  var drawnLabels = {};
+  for (var li = 0; li < LINES.length; li++) {
+    var line = LINES[li];
+    var labelKey = line.n + '_' + line.roff;
+    if (!drawnLabels[labelKey]) {
+      var labelY;
+      if (layoutFlipV) {
+        var flippedTop = 24 - (line.roff + (line.end - line.start));
+        labelY = flippedTop === 0 ? 0 : flippedTop * RS;
+      } else {
+        labelY = line.roff === 0 ? 0 : line.roff * RS;
+      }
+      var labelX = layoutFlipH ? (MAP_W - CW - line.x) : line.x;
+      html += '<div class="line-label' + (line.roff > 0 ? ' sub' : '') + '" style="left:' + labelX + 'px;top:' + labelY + 'px;">' + line.n + '</div>';
+      drawnLabels[labelKey] = true;
+    }
+  }
+
+
+  for (var r = 1; r <= 25; r++) {
+    var rowY = LH + (layoutFlipV ? (25 - r) : (r - 1)) * RS;
+    var rnX = layoutFlipH ? (MAP_W - 20) : 2;
+    html += '<div class="row-num" style="left:' + rnX + 'px;top:' + rowY + 'px;">' + r + '</div>';
+  }
+
+  for (var li = 0; li < LINES.length; li++) {
+    var line = LINES[li];
+    for (var s = line.start; s <= line.end; s++) {
+      var id = eqId(line.n, s);
+      var rowIdx = line.roff + (s - line.start);
+      var cy = LH + (layoutFlipV ? (24 - rowIdx) : rowIdx) * RS;
+      var e = eq[id];
+      var cls = getCls(e);
+
+      var hasPrePack = e && e.prePackaging;
+      var cellLabel = line.n + '-' + s;
+      var cx = layoutFlipH ? (MAP_W - CW - line.x) : line.x;
+      html += '<div class="' + cls + '" style="left:' + cx + 'px;top:' + cy + 'px;" data-id="' + id + '" data-s="' + s + '" data-label="' + cellLabel + '">';
+      var isDone = e && e.shipStage === 'done';
+      if (isDone) html += '<span class="badge-done">&#10003;</span>';
+      if (hasPrePack) html += '<span class="badge-prepack">선</span>';
+      if (e && e.shipCanceled && e.canceledAt) {
+        var cd = Math.floor((Date.now() - e.canceledAt) / 86400000);
+        if (cd > 0) html += '<span class="badge-cancel-day">D+' + cd + '</span>';
+      }
+      html += cellLabel;
+      html += '</div>';
+    }
+  }
+
   map.innerHTML = html;
 
   cellEls = {};
@@ -731,6 +757,19 @@ function buildMap() {
   }
 
   scaleMap();
+}
+
+function toggleFlip(axis) {
+  if (axis === 'h') layoutFlipH = !layoutFlipH;
+  else layoutFlipV = !layoutFlipV;
+  localStorage.setItem('layout_flipH_' + currentUser.id, layoutFlipH ? '1' : '');
+  localStorage.setItem('layout_flipV_' + currentUser.id, layoutFlipV ? '1' : '');
+  var btn = document.getElementById('flipVBtn');
+  if (btn) {
+    if (layoutFlipV) btn.classList.add('active');
+    else btn.classList.remove('active');
+  }
+  buildMap();
 }
 
 function scaleMap() {
@@ -813,6 +852,7 @@ function updateSummary() {
     '<span><span class="sdot" style="background:#22c55e;"></span>FQC <b>' + counts.fqc + '</b></span>' +
     '<span><span class="sdot" style="background:#64748b;"></span>출하 <b>' + counts.done + '</b></span>' +
     '<span><span class="sdot" style="background:#ef4444;"></span>취소 <b>' + counts.canceled + '</b></span>';
+  document.getElementById('summary').innerHTML += '<span id="flipVBtn" class="flip-btn' + (layoutFlipV ? ' active' : '') + '" onclick="toggleFlip()" title="상하 반전">↕</span>';
 }
 
 function showTip(ev, id) {
@@ -830,6 +870,7 @@ function showTip(ev, id) {
       '<div class="tr"><span class="tl">S/N</span><span class="tv">' + (e.equipName || '-') + '</span></div>' +
       '<div class="tr"><span class="tl">Tracking</span><span class="tv">' + (e.lotNo || '-') + '</span></div>' +
       '<div class="tr"><span class="tl">고객사</span><span class="tv">' + (e.vendor || '-') + '</span></div>' +
+      '<div class="tr"><span class="tl">제조</span><span class="tv">' + (e.mfgPerson || '-') + '</span></div>' +
       '<div style="display:flex;gap:6px;margin-top:8px;">' +
         ((currentUser.dept === '산업품질2팀' || currentUser.id === 'pjyc17') ? '<button class="tip-close" style="margin:0;color:#3b82f6;border-color:#3b82f640;" onclick="showRestorePrompt(\'' + id + '\')">취소 복원</button>' : '') +
         '<button class="tip-close" style="margin:0;" onclick="hideTip()">닫기</button>' +
@@ -885,6 +926,7 @@ function showTip(ev, id) {
       '<div class="tr"><span class="tl">S/N</span><span class="tv">' + (e.equipName || '-') + '</span></div>' +
       '<div class="tr"><span class="tl">Tracking</span><span class="tv">' + (e.lotNo || '-') + '</span></div>' +
       '<div class="tr"><span class="tl">고객사</span><span class="tv">' + (e.vendor || '-') + '</span></div>' +
+      '<div class="tr"><span class="tl">제조</span><span class="tv">' + (e.mfgPerson || '-') + '</span></div>' +
       '<div class="tr"><span class="tl">FQC</span><span class="tv">' + (e.model || '-') + '</span></div>' +
       (e.prePackaging ? '<div class="tr"><span class="tl">선포장</span><span class="tv" style="color:#a855f7;font-weight:700;">O</span></div>' : '') +
       (e.shipment ? '<div class="tr"><span class="tl">Shipment</span><span class="tv">' + esc(e.shipment) + '</span></div>' : '') +
@@ -1558,6 +1600,9 @@ function fmtMin(m) {
 
 var currentUser = {};
 var pendingSlots = [];
+var layoutFlipH = false;
+var layoutFlipV = false;
+var FLIP_USERS = ['pjyc17', 'asdf', 'b', 'p'];
 
 function lineOptionHtml() {
   var html = '';
@@ -1824,6 +1869,10 @@ async function init() {
         document.getElementById('gmToLine').innerHTML = opts;
         document.getElementById('gmClearLine').innerHTML = opts;
       }
+      if (FLIP_USERS.indexOf(currentUser.id) >= 0) {
+        layoutFlipH = !!localStorage.getItem('layout_flipH_' + currentUser.id);
+      }
+      layoutFlipV = !!localStorage.getItem('layout_flipV_' + currentUser.id);
     }
     var res = await fetch('/api/status', {headers:{'Authorization':'Bearer ' + authToken}});
     if (!res.ok) { location.href = '/?redirect=vhwkd'; return; }
