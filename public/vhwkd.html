@@ -928,7 +928,7 @@ function showTip(ev, id) {
       '<div class="tr"><span class="tl">고객사</span><span class="tv">' + (e.vendor || '-') + '</span></div>' +
       '<div class="tr"><span class="tl">제조</span><span class="tv">' + (e.mfgPerson || '-') + '</span></div>' +
       '<div class="tr"><span class="tl">FQC</span><span class="tv">' + (e.model || '-') + '</span></div>' +
-      (e.prePackaging ? '<div class="tr"><span class="tl">선포장</span><span class="tv" style="color:#a855f7;font-weight:700;">O</span></div>' : '') +
+      (e.prePackaging ? '<div class="tr"><span class="tl">선포장</span><span class="tv" style="color:#a855f7;font-weight:700;">O' + ((currentUser.dept === '산업품질2팀' || currentUser.id === 'pjyc17') ? ' <button onclick="showPrepackPrompt(\'' + id + '\')" style="font-size:10px;padding:1px 6px;border-radius:4px;border:1px solid #a855f740;background:#a855f720;color:#a855f7;cursor:pointer;margin-left:4px;">해제</button>' : '') + '</span></div>' : '') +
       (e.shipment ? '<div class="tr"><span class="tl">Shipment</span><span class="tv">' + esc(e.shipment) + '</span></div>' : '') +
       '<div class="stage-bar">' +
         '<div class="stage-now">' +
@@ -949,6 +949,15 @@ function showTip(ev, id) {
           '<button onclick="confirmCancel()" style="background:#ef4444;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">확인</button>' +
         '</div>' +
         '<div id="cancelErr" style="font-size:11px;color:#ef4444;margin-top:4px;"></div>' +
+      '</div>' : '') +
+      ((currentUser.dept === '산업품질2팀' || currentUser.id === 'pjyc17') && e.prePackaging ?
+      '<div id="prepackBox" style="display:none;margin-top:8px;">' +
+        '<div style="font-size:11px;color:#a855f7;margin-bottom:6px;">선포장 해제 - 비밀번호를 입력하세요</div>' +
+        '<div style="display:flex;gap:6px;">' +
+          '<input type="password" id="prepackPw" style="flex:1;background:#0f172a;border:1px solid #a855f740;border-radius:6px;color:#e2e8f0;padding:8px;font-size:16px;outline:none;" placeholder="비밀번호" onkeydown="if(event.key===\'Enter\')confirmPrepackRemove()">' +
+          '<button onclick="confirmPrepackRemove()" style="background:#a855f7;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">확인</button>' +
+        '</div>' +
+        '<div id="prepackErr" style="font-size:11px;color:#a855f7;margin-top:4px;"></div>' +
       '</div>' : '') +
       (currentUser.id === 'pjyc17' ? '<div class="hist-section"><div class="hist-title">이력</div><div class="hist-list" id="histList"><span style="color:#475569;font-size:10px;">불러오는 중...</span></div></div>' : '');
   }
@@ -1096,6 +1105,39 @@ function confirmCancel() {
       hideTip();
     } else {
       errEl.textContent = (res && res.error) || '취소 실패';
+    }
+  });
+}
+
+var prepackTargetId = null;
+function showPrepackPrompt(id) {
+  prepackTargetId = id;
+  document.getElementById('prepackBox').style.display = 'block';
+  document.getElementById('prepackPw').value = '';
+  document.getElementById('prepackErr').textContent = '';
+  document.getElementById('prepackPw').focus();
+  var tip = document.getElementById('tip');
+  var maxTop = window.innerHeight - tip.offsetHeight - 10;
+  var cur = parseInt(tip.style.top) || 0;
+  if (cur > maxTop) tip.style.top = Math.max(10, maxTop) + 'px';
+}
+function confirmPrepackRemove() {
+  var errEl = document.getElementById('prepackErr');
+  if (!socket) { errEl.textContent = '소켓 연결 없음'; return; }
+  if (!prepackTargetId) { errEl.textContent = '장비 선택 없음'; return; }
+  var pw = document.getElementById('prepackPw').value;
+  if (!pw) { errEl.textContent = '비밀번호를 입력하세요'; return; }
+  errEl.textContent = '처리 중...';
+  var done = false;
+  var timer = setTimeout(function() { if (!done) { done = true; errEl.textContent = '서버 응답 없음'; } }, 5000);
+  socket.emit('removePrepack', {equipmentId: prepackTargetId, password: pw}, function(res) {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    if (res && res.ok) {
+      hideTip();
+    } else {
+      errEl.textContent = (res && res.error) || '선포장 해제 실패';
     }
   });
 }

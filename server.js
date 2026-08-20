@@ -2157,6 +2157,29 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('removePrepack', (data, ack) => {
+    try {
+      const { equipmentId, password } = data || {};
+      const u = socket.user;
+      if (!u) { if (ack) ack({ error: '인증 필요' }); return; }
+      const users = loadUsers();
+      const user = users[u.id];
+      if (!user || user.pw !== password) { if (ack) ack({ error: '비밀번호가 틀렸습니다' }); return; }
+      const eq = equipment[equipmentId];
+      if (!eq || !eq.prePackaging) { if (ack) ack({ error: '해당 장비 없음' }); return; }
+      if (user.dept !== '산업품질2팀' && u.id !== 'pjyc17') { if (ack) ack({ error: 'FQC 소속만 선포장 해제가 가능합니다' }); return; }
+      eq.prePackaging = false;
+      io.emit('update', eq);
+      saveData();
+      addLog('stage', u.id, u.name, `${eq.line}라인 ${eq.number}번 선포장 해제 (${eq.equipName})`, { equipmentId: eq.id, equipName: eq.equipName, line: eq.line, slotNumber: eq.number });
+      io.emit('newLog');
+      if (ack) ack({ ok: true });
+    } catch (e) {
+      console.error('[removePrepack] 에러:', e);
+      if (ack) ack({ error: '서버 오류' });
+    }
+  });
+
   socket.on('cancelShipment', (data, ack) => {
     console.log('[cancelShipment] 수신:', data, 'ack:', typeof ack);
     try {
