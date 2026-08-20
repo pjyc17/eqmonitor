@@ -336,6 +336,8 @@ footer {
       &bull; <span class="new-feat">카메라 현황판 (FQC &middot; NT 전용)</span><span class="new-tag">NEW</span><br>
       &bull; <span class="new-feat">자동 로그인 (체크박스)</span><span class="new-tag">NEW</span><br>
       &bull; <span class="new-feat">선포장 즉시 배치 (일반 장비는 자정 배치)</span><span class="new-tag">NEW</span><br>
+      &bull; <span class="new-feat">상하 반전 (배치도 뒤집어 보기)</span><span class="new-tag">NEW</span><br>
+      &bull; <span class="new-feat">제조 담당자 표시 (팝업에서 확인)</span><span class="new-tag">NEW</span><br>
       &bull; 슬롯 이동 / 비우기 / 수동 등록 (관리 기능)
     </div>
   </div>
@@ -414,6 +416,7 @@ footer {
     <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:3px;vertical-align:middle;"></span>FQC <b style="color:#e2e8f0;">12</b></span>
     <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#475569;margin-right:3px;vertical-align:middle;"></span>출하 전 <b style="color:#e2e8f0;">10</b></span>
     <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#334155;margin-right:3px;vertical-align:middle;"></span>출하 <b style="color:#e2e8f0;">7</b></span>
+    <span style="margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:22px;height:18px;border-radius:3px;font-size:13px;border:1px solid #334155;background:#1e293b;color:#64748b;cursor:default;">&#8597;</span>
   </div>
 
   <h3>범례</h3>
@@ -519,6 +522,7 @@ footer {
     <div class="popup-demo-row"><span class="plabel">Tracking</span><span class="pval">S2606111-1</span></div>
     <div class="popup-demo-row"><span class="plabel">고객사</span><span class="pval">Iljin Electronics</span></div>
     <div class="popup-demo-row"><span class="plabel">FQC</span><span class="pval">박민태</span></div>
+    <div class="popup-demo-row"><span class="plabel">제조</span><span class="pval">김철수</span></div>
     <div style="display:flex;align-items:center;gap:6px;margin:10px 0 4px;padding:8px 10px;background:#0f172a;border-radius:6px;">
       <span style="width:8px;height:8px;border-radius:50%;background:#e2e8f0;flex-shrink:0;"></span>
       <span style="font-size:12px;color:#e2e8f0;font-weight:600;">출하 예정</span>
@@ -810,6 +814,20 @@ footer {
       </div>
     </div>
   </div>
+
+  <h3>상하 반전 <span class="badge" style="background:#22c55e20;color:#22c55e;border-color:#22c55e40;">NEW</span></h3>
+  <p>요약 바 오른쪽 끝의 <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:18px;border-radius:3px;font-size:13px;border:1px solid #334155;background:#1e293b;color:#64748b;">&#8597;</span> 버튼을 클릭하면 배치도의 상하를 반전해서 볼 수 있습니다.</p>
+  <div class="card">
+    <div class="card-body">
+      &bull; 공장에서 보는 위치에 따라 배치도를 뒤집어서 확인할 때 유용합니다<br>
+      &bull; 반전 상태는 사용자별로 저장되어, 다음 접속 시에도 유지됩니다<br>
+      &bull; 다른 사용자의 화면에는 영향을 주지 않습니다<br>
+      &bull; 버튼이 파란색으로 활성화되어 있으면 현재 반전 상태입니다
+    </div>
+  </div>
+
+  <h3>제조 담당자 표시 <span class="badge" style="background:#22c55e20;color:#22c55e;border-color:#22c55e40;">NEW</span></h3>
+  <p>장비 셀을 클릭하면 상세 팝업에 <b>제조 담당자</b> 정보가 함께 표시됩니다.</p>
 
   <h3>자동 로그인</h3>
   <div class="card">
