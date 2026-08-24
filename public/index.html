@@ -736,6 +736,12 @@ function connectSocket() {
   });
 
   socket.on('init', (data) => {
+    if (data.freshUser) {
+      currentUser.name = data.freshUser.name;
+      currentUser.dept = data.freshUser.dept;
+      currentUser.role = data.freshUser.role;
+      localStorage.setItem('user', JSON.stringify(currentUser));
+    }
     allEquipment = data.equipment;
     teams = data.teams;
     lineNames = data.lineNames || ['A','B','C','D','E'];

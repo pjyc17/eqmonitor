@@ -1408,6 +1408,12 @@ function connectSocket() {
     renderPendingSlots(data);
   });
   socket.on('init', function(data) {
+    if (data && data.freshUser) {
+      currentUser.name = data.freshUser.name;
+      currentUser.dept = data.freshUser.dept;
+      currentUser.role = data.freshUser.role;
+      localStorage.setItem('user', JSON.stringify(currentUser));
+    }
     if (data && data.pendingSlots) renderPendingSlots(data.pendingSlots);
     if (data && data.cameras) { cameras = data.cameras; paintCameras(); }
   });

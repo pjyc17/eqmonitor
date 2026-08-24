@@ -1978,7 +1978,7 @@ io.on('connection', (socket) => {
   });
 
   socket.user = user;
-  socket.emit('init', { equipment, teams, lineNames: LINE_NAMES, lineConfig: LINE_CONFIG, pendingSlots, cameras });
+  socket.emit('init', { equipment, teams, lineNames: LINE_NAMES, lineConfig: LINE_CONFIG, pendingSlots, cameras, freshUser: { id: user.id, name: user.name, dept: user.dept, role: user.role } });
 
   const userNotifs = notifications[user.name] || [];
   if (userNotifs.length > 0) {
