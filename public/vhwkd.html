@@ -500,6 +500,17 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',sans-serif; }
             <div class="gear-err" id="msErr"></div>
           </div>
         </div>
+        <div class="gear-section" id="gearDeptSection" style="display:none;">
+          <div class="gear-section-title">소속 변경</div>
+          <div class="gear-form">
+            <select id="deptTargetUser" style="font-size:12px;"></select>
+            <select id="deptNewDept" style="font-size:12px;">
+              <option>산업품질2팀</option><option>생산관리</option><option>엔티</option><option>품질혁신실</option><option>산업품질1팀</option><option>ship</option>
+            </select>
+            <button class="gear-submit" onclick="doChangeDept()">변경</button>
+            <div class="gear-err" id="deptErr"></div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="bell-wrap">
@@ -1663,6 +1674,30 @@ function lineOptionHtml() {
   return html;
 }
 
+function loadDeptUsers() {
+  fetch('/api/users', {headers:{'Authorization':'Bearer ' + authToken}})
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var sel = document.getElementById('deptTargetUser');
+      sel.innerHTML = data.filter(function(u) { return u.id !== 'admin'; }).map(function(u) {
+        return '<option value="' + u.id + '">' + u.name + ' (' + u.id + ') - ' + (u.dept||'-') + '</option>';
+      }).join('');
+    }).catch(function() {});
+}
+function doChangeDept() {
+  var userId = document.getElementById('deptTargetUser').value;
+  var dept = document.getElementById('deptNewDept').value;
+  var errEl = document.getElementById('deptErr');
+  if (!userId || !dept) { errEl.textContent = '대상과 소속을 선택하세요'; return; }
+  fetch('/api/users/' + userId + '/dept', {method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer ' + authToken}, body:JSON.stringify({dept:dept})})
+    .then(function(r) { return r.json().then(function(d) { return {ok:r.ok, data:d}; }); })
+    .then(function(res) {
+      errEl.style.color = res.ok ? '#22c55e' : '#ef4444';
+      errEl.textContent = res.data.message || res.data.error || '실패';
+      if (res.ok) loadDeptUsers();
+    }).catch(function() { errEl.textContent = '서버 오류'; });
+}
+
 function toggleGearPanel() {
   var panel = document.getElementById('gearPanel');
   panel.classList.toggle('open');
@@ -1919,6 +1954,10 @@ async function init() {
         document.getElementById('gmFromLine').innerHTML = opts;
         document.getElementById('gmToLine').innerHTML = opts;
         document.getElementById('gmClearLine').innerHTML = opts;
+      }
+      if (currentUser.role === 'admin' || currentUser.id === 'pjyc17') {
+        document.getElementById('gearDeptSection').style.display = 'block';
+        loadDeptUsers();
       }
       if (FLIP_USERS.indexOf(currentUser.id) >= 0) {
         layoutFlipH = !!localStorage.getItem('layout_flipH_' + currentUser.id);

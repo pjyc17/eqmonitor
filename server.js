@@ -374,6 +374,22 @@ app.delete('/api/users/:id', (req, res) => {
   res.json({ message: '계정 삭제 완료' });
 });
 
+app.put('/api/users/:id/dept', (req, res) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  const user = getUserByToken(token);
+  if (!user || (user.role !== 'admin' && user.id !== 'pjyc17')) return res.status(403).json({ error: '권한이 없습니다' });
+  const targetId = req.params.id;
+  if (!users[targetId]) return res.status(404).json({ error: '존재하지 않는 계정입니다' });
+  const { dept } = req.body;
+  if (!dept) return res.status(400).json({ error: '소속을 입력해주세요' });
+  const prev = users[targetId].dept;
+  users[targetId].dept = dept;
+  saveUsers();
+  addLog('admin', user.id, user.name, `${users[targetId].name}(${targetId}) 소속 변경: ${prev} → ${dept}`);
+  io.emit('newLog');
+  res.json({ message: `${users[targetId].name} 소속이 ${dept}(으)로 변경되었습니다` });
+});
+
 app.get('/api/clients', (req, res) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
   const user = getUserByToken(token);
@@ -2561,7 +2577,10 @@ app.get('/rhksflwk', (req, res) => {
       data.forEach(u => {
         const tr = document.createElement('tr');
         const delBtn = u.id === 'admin' ? '' : '<button class="btn btn-red" onclick="delUser(\\''+u.id+'\\')">삭제</button>';
-        tr.innerHTML = '<td>'+u.id+'</td><td>'+u.name+'</td><td>'+(u.dept||'-')+'</td><td>'+(u.role==='admin'?'관리자':'사용자')+'</td><td>'+delBtn+'</td>';
+        const depts = ['산업품질2팀','생산관리','엔티','품질혁신실','산업품질1팀','ship','관리'];
+        const deptOpts = depts.map(d => '<option'+(d===u.dept?' selected':'')+'>'+d+'</option>').join('');
+        const deptSel = u.id === 'admin' ? (u.dept||'-') : '<select onchange="changeDept(\\''+u.id+'\\',this.value)" style="background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:4px;padding:2px 4px;font-size:12px;">'+deptOpts+'</select>';
+        tr.innerHTML = '<td>'+u.id+'</td><td>'+u.name+'</td><td>'+deptSel+'</td><td>'+(u.role==='admin'?'관리자':'사용자')+'</td><td>'+delBtn+'</td>';
         tbody.appendChild(tr);
       });
     }
@@ -2591,6 +2610,12 @@ app.get('/rhksflwk', (req, res) => {
         tr.innerHTML = '<td>'+time+'</td><td>'+(l.userName||'-')+'</td><td>'+label+'</td><td>'+l.detail+'</td>';
         tbody.appendChild(tr);
       });
+    }
+
+    async function changeDept(id, dept) {
+      const res = await fetch('/api/users/'+id+'/dept', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+token}, body:JSON.stringify({dept}) });
+      const data = await res.json();
+      if (!res.ok) alert(data.error || '변경 실패');
     }
 
     async function delUser(id) {
