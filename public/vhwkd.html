@@ -372,8 +372,11 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',sans-serif; }
 .notif-panel {
   display:none; position:absolute; top:36px; right:0;
   background:#1e293b; border:1px solid #334155; border-radius:8px;
-  width:280px; max-height:320px; overflow-y:auto;
+  width:280px; max-height:60vh; overflow-y:auto;
   box-shadow:0 8px 24px rgba(0,0,0,0.5); z-index:9999;
+}
+@media (max-width:700px) {
+  .notif-panel { position:fixed; top:auto; bottom:0; left:0; right:0; width:100%; max-height:70vh; border-radius:12px 12px 0 0; }
 }
 .notif-panel.open { display:block; }
 .notif-item {
@@ -404,7 +407,7 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',sans-serif; }
 .gear-panel {
   display:none; position:absolute; top:36px; right:0;
   background:#1e293b; border:1px solid #334155; border-radius:8px;
-  width:320px; max-height:420px; overflow-y:auto;
+  width:320px; max-height:80vh; overflow-y:auto;
   box-shadow:0 8px 24px rgba(0,0,0,0.5); z-index:9999;
 }
 @media (max-width:700px) {
@@ -503,8 +506,8 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',sans-serif; }
         <div class="gear-section" id="gearDeptSection" style="display:none;">
           <div class="gear-section-title">소속 변경</div>
           <div class="gear-form">
-            <select id="deptTargetUser" style="font-size:12px;"></select>
-            <select id="deptNewDept" style="font-size:12px;">
+            <select id="deptTargetUser"></select>
+            <select id="deptNewDept">
               <option>산업품질2팀</option><option>생산관리</option><option>엔티</option><option>품질혁신실</option><option>산업품질1팀</option><option>ship</option>
             </select>
             <button class="gear-submit" onclick="doChangeDept()">변경</button>
@@ -1435,6 +1438,16 @@ function connectSocket() {
     cameras = data;
     paintCameras();
   });
+  socket.on('shipNotify', function(data) {
+    if (currentUser.dept !== 'ship') return;
+    var title = data.line + '라인 ' + data.number + '번 FQC 완료';
+    var body = (data.equipName ? 'S/N: ' + data.equipName + '\n' : '') +
+      (data.lotNo ? 'Tracking: ' + data.lotNo + '\n' : '') +
+      (data.vendor ? '고객사: ' + data.vendor + '\n' : '') +
+      (data.shipment ? '선적지: ' + data.shipment : '');
+    showToast(title, body);
+    addNotifItem(data.id, title, body, '#fb923c');
+  });
   socket.on('registerNotify', function(data) {
     var title = data.title || '새 회원가입';
     var body = data.body || (data.name + ' (' + data.dept + ') / ID: ' + data.id);
@@ -1454,16 +1467,17 @@ function showToast(title, body) {
   setTimeout(function() { if (toast.parentElement) toast.remove(); }, 3000);
 }
 
-function addNotifItem(notifId, title, body) {
+function addNotifItem(notifId, title, body, color) {
   var panel = document.getElementById('notifPanel');
   if (panel.querySelector('[data-notif-id="' + notifId + '"]')) return;
   document.getElementById('notifEmpty').style.display = 'none';
   var item = document.createElement('div');
   item.className = 'notif-item';
   item.setAttribute('data-notif-id', notifId);
+  var titleColor = color || '#22c55e';
   item.innerHTML =
     '<button class="notif-item-close">&times;</button>' +
-    '<div class="notif-item-title">' + title + '</div>' +
+    '<div class="notif-item-title" style="color:' + titleColor + '">' + title + '</div>' +
     '<div>' + body.replace(/\n/g, '<br>') + '</div>';
   item.querySelector('.notif-item-close').onclick = function() {
     item.remove();
@@ -1680,7 +1694,7 @@ function loadDeptUsers() {
     .then(function(data) {
       var sel = document.getElementById('deptTargetUser');
       sel.innerHTML = data.filter(function(u) { return u.id !== 'admin'; }).map(function(u) {
-        return '<option value="' + u.id + '">' + u.name + ' (' + u.id + ') - ' + (u.dept||'-') + '</option>';
+        return '<option value="' + u.id + '">' + u.name + ' - ' + (u.dept||'-') + '</option>';
       }).join('');
     }).catch(function() {});
 }

@@ -345,7 +345,7 @@ app.get('/auth/callback', async (req, res) => {
 app.get('/api/users', (req, res) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
   const user = getUserByToken(token);
-  if (!user || user.role !== 'admin') return res.status(403).json({ error: '권한이 없습니다' });
+  if (!user || (user.role !== 'admin' && user.id !== 'pjyc17')) return res.status(403).json({ error: '권한이 없습니다' });
   const list = Object.values(users).map(u => ({ id: u.id, name: u.name, dept: u.dept, role: u.role, createdAt: u.createdAt }));
   res.json(list);
 });
@@ -403,6 +403,29 @@ app.get('/api/logs', (req, res) => {
   if (!user || user.role !== 'admin') return res.status(403).json({ error: '권한이 없습니다' });
   const recent = logs.slice(-200).reverse();
   res.json(recent);
+});
+
+app.get('/api/activity-timeline', (req, res) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  const user = getUserByToken(token);
+  if (!user || (user.role !== 'admin' && user.id !== 'pjyc17')) return res.status(403).json({ error: '권한이 없습니다' });
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayMs = today.getTime();
+  const todayLogs = logs.filter(l => l.time >= todayMs && l.userId && l.userId !== 'auto' && l.userId !== 'prepack');
+  const byUser = {};
+  const users = loadUsers();
+  Object.keys(users).forEach(id => {
+    if (id === 'admin') return;
+    const u = users[id];
+    if (u.dept === '산업품질2팀' || u.dept === '엔티' || u.dept === '생산관리') {
+      byUser[id] = { name: u.name, dept: u.dept, times: [] };
+    }
+  });
+  todayLogs.forEach(l => {
+    if (!byUser[l.userId]) byUser[l.userId] = { name: l.userName || l.userId, dept: '', times: [] };
+    byUser[l.userId].times.push({ t: l.time, action: l.action || '', detail: l.detail || '', meta: l.meta || null });
+  });
+  res.json({ date: todayMs, users: byUser });
 });
 
 // ── 인증 미들웨어 (이후의 모든 API에 적용) ──
@@ -2000,6 +2023,21 @@ io.on('connection', (socket) => {
   if (userNotifs.length > 0) {
     userNotifs.forEach(n => socket.emit('fqcNotify', n));
   }
+  if (user.dept === 'ship') {
+    Object.values(equipment).filter(eq => eq.shipStage === 'fqc' && eq.shipDate).forEach(eq => {
+      socket.emit('shipNotify', {
+        id: 'ship_init_' + eq.id,
+        equipmentId: eq.id,
+        line: eq.line,
+        number: eq.number,
+        equipName: eq.equipName || '',
+        lotNo: eq.lotNo || '',
+        vendor: eq.vendor || '',
+        shipment: eq.shipment || '',
+        createdAt: Date.now(),
+      });
+    });
+  }
   if (user.id === 'pjyc17') {
     const pNotifs = notifications['__pjyc17__'] || [];
     pNotifs.forEach(n => socket.emit('registerNotify', n));
@@ -2151,6 +2189,25 @@ io.on('connection', (socket) => {
       for (const [sid, client] of connectedClients) {
         if (client.userName === fqcName) {
           io.to(sid).emit('fqcNotify', notif);
+        }
+      }
+    }
+
+    if (stage === 'fqc') {
+      const shipNotif = {
+        id: 'ship_' + Date.now() + '_' + eq.id,
+        equipmentId: eq.id,
+        line: eq.line,
+        number: eq.number,
+        equipName: eq.equipName || '',
+        lotNo: eq.lotNo || '',
+        vendor: eq.vendor || '',
+        shipment: eq.shipment || '',
+        createdAt: Date.now(),
+      };
+      for (const [sid, client] of connectedClients) {
+        if (client.userDept === 'ship') {
+          io.to(sid).emit('shipNotify', shipNotif);
         }
       }
     }
@@ -2461,6 +2518,19 @@ app.get('/rhksflwk', (req, res) => {
   .msg { padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-top: 8px; }
   .msg.ok { background: #065f46; color: #6ee7b7; }
   .msg.err { background: #7f1d1d; color: #fca5a5; }
+  .tl-chart { min-width:600px; }
+  .tl-row { display:flex; align-items:center; border-bottom:1px solid #1e293b; height:32px; }
+  .tl-name { width:90px; flex-shrink:0; font-size:12px; color:#94a3b8; padding-right:8px; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tl-bar { flex:1; position:relative; height:100%; background:#0f172a; }
+  .tl-dot { position:absolute; top:50%; width:8px; height:8px; border-radius:50%; background:#3b82f6; transform:translate(-50%,-50%); cursor:pointer; z-index:1; }
+  .tl-dot:hover { background:#60a5fa; transform:translate(-50%,-50%) scale(1.6); }
+  .tl-tip { display:none; position:fixed; background:#1e293b; border:1px solid #3b82f6; border-radius:6px; padding:6px 10px; font-size:12px; color:#e2e8f0; white-space:nowrap; z-index:99999; pointer-events:none; box-shadow:0 4px 12px rgba(0,0,0,0.5); }
+  .tl-tip .tip-time { color:#60a5fa; font-weight:700; }
+  .tl-tip .tip-action { color:#a855f7; margin-left:4px; }
+  .tl-tip .tip-detail { display:block; color:#94a3b8; margin-top:2px; font-size:11px; max-width:260px; overflow:hidden; text-overflow:ellipsis; }
+  .tl-axis { display:flex; margin-left:90px; }
+  .tl-axis span { flex:1; font-size:10px; color:#475569; text-align:center; }
+  .tl-grid { position:absolute; top:0; bottom:0; width:1px; background:#1e293b; }
   .login-box { max-width: 320px; margin: 80px auto; }
   .login-box h1 { text-align: center; margin-bottom: 24px; }
   .login-box .form-input { width: 100%; margin-bottom: 10px; }
@@ -2489,6 +2559,8 @@ app.get('/rhksflwk', (req, res) => {
       <div class="count" id="count"></div>
       <table><thead><tr><th>#</th><th>이름</th><th>소속</th><th>IP</th><th>기기</th><th>브라우저</th><th>접속 시간</th></tr></thead>
       <tbody id="clientBody"></tbody></table>
+      <h2 style="margin-top:24px;">1일 활동 타임라인</h2>
+      <div id="timelineWrap" style="margin-top:12px;overflow-x:auto;"></div>
     </div>
 
     <div id="accounts" class="section">
@@ -2502,7 +2574,7 @@ app.get('/rhksflwk', (req, res) => {
       </div>
       <div id="addMsg"></div>
       <h2>계정 목록</h2>
-      <table><thead><tr><th>ID</th><th>이름</th><th>소속</th><th>권한</th><th></th></tr></thead>
+      <table><thead><tr><th style="cursor:pointer" onclick="sortUsers('id')">ID ⇅</th><th style="cursor:pointer" onclick="sortUsers('name')">이름 ⇅</th><th style="cursor:pointer" onclick="sortUsers('dept')">소속 ⇅</th><th>권한</th><th></th></tr></thead>
       <tbody id="userBody"></tbody></table>
     </div>
 
@@ -2566,15 +2638,22 @@ app.get('/rhksflwk', (req, res) => {
         tr.innerHTML = '<td>'+(i+1)+'</td><td>'+(c.userName||'-')+'</td><td>'+(c.userDept||'-')+'</td><td>'+c.ip+'</td><td>'+device+'</td><td>'+browser+'</td><td>'+time+'</td>';
         tbody.appendChild(tr);
       });
+      loadTimeline();
     }
 
-    async function loadUsers() {
-      const res = await fetch('/api/users', { headers: { 'Authorization': 'Bearer '+token } });
-      if (!res.ok) return;
-      const data = await res.json();
+    let userList = [];
+    let userSortKey = 'dept';
+    let userSortAsc = true;
+    function sortUsers(key) {
+      if (userSortKey === key) userSortAsc = !userSortAsc;
+      else { userSortKey = key; userSortAsc = true; }
+      renderUsers();
+    }
+    function renderUsers() {
+      const sorted = [...userList].sort((a,b) => { const v = (a[userSortKey]||'').localeCompare(b[userSortKey]||'','ko'); return userSortAsc?v:-v; });
       const tbody = document.getElementById('userBody');
       tbody.innerHTML = '';
-      data.forEach(u => {
+      sorted.forEach(u => {
         const tr = document.createElement('tr');
         const delBtn = u.id === 'admin' ? '' : '<button class="btn btn-red" onclick="delUser(\\''+u.id+'\\')">삭제</button>';
         const depts = ['산업품질2팀','생산관리','엔티','품질혁신실','산업품질1팀','ship','관리'];
@@ -2583,6 +2662,12 @@ app.get('/rhksflwk', (req, res) => {
         tr.innerHTML = '<td>'+u.id+'</td><td>'+u.name+'</td><td>'+deptSel+'</td><td>'+(u.role==='admin'?'관리자':'사용자')+'</td><td>'+delBtn+'</td>';
         tbody.appendChild(tr);
       });
+    }
+    async function loadUsers() {
+      const res = await fetch('/api/users', { headers: { 'Authorization': 'Bearer '+token } });
+      if (!res.ok) return;
+      userList = await res.json();
+      renderUsers();
     }
 
     async function addUser() {
@@ -2610,6 +2695,74 @@ app.get('/rhksflwk', (req, res) => {
         tr.innerHTML = '<td>'+time+'</td><td>'+(l.userName||'-')+'</td><td>'+label+'</td><td>'+l.detail+'</td>';
         tbody.appendChild(tr);
       });
+    }
+
+    async function loadTimeline() {
+      const res = await fetch('/api/activity-timeline', { headers: { 'Authorization': 'Bearer '+token } });
+      if (!res.ok) return;
+      const data = await res.json();
+      const wrap = document.getElementById('timelineWrap');
+      const users = data.users;
+      const ids = Object.keys(users);
+      if (!ids.length) { wrap.innerHTML = '<div style="color:#475569;font-size:13px;">오늘 활동 기록 없음</div>'; return; }
+      const deptOrder = d => d==='산업품질2팀'?0:d==='엔티'||d==='생산관리'?2:1;
+      ids.sort((a,b) => { const da=deptOrder(users[a].dept||''), db=deptOrder(users[b].dept||''); if(da!==db) return da-db; const dna=users[a].dept||'', dnb=users[b].dept||''; if(dna!==dnb) return dna.localeCompare(dnb,'ko'); return users[b].times.length - users[a].times.length; });
+      const aLabels = { login:'로그인', register:'회원가입', receive:'입고', release:'출고', checkin:'체크인', checkout:'체크아웃', shipdate:'출고예정', inspect:'검수', schedule:'출하일정', stage:'단계변경', camera:'카메라', admin:'관리' };
+      const now = new Date();
+      const curH = now.getHours() + now.getMinutes()/60;
+      let html = '<div class="tl-chart">';
+      const hours = [0,3,6,9,12,15,18,21,24];
+      html += '<div class="tl-axis" style="margin-bottom:4px;">';
+      hours.forEach(h => { html += '<span>'+h+'</span>'; });
+      html += '</div>';
+      let prevDept = '';
+      ids.forEach(id => {
+        const u = users[id];
+        const curDept = u.dept || '';
+        if (prevDept && curDept !== prevDept) {
+          html += '<div style="height:2px;background:#475569;margin:2px 0;"></div>';
+        }
+        prevDept = curDept;
+        html += '<div class="tl-row"><div class="tl-name" title="'+u.name+'('+id+') '+curDept+'">'+u.name+'</div><div class="tl-bar">';
+        hours.forEach(h => { if (h>0 && h<24) html += '<div class="tl-grid" style="left:'+(h/24*100)+'%"></div>'; });
+        u.times.forEach(entry => {
+          const t = entry.t || entry;
+          const d = new Date(t);
+          const h = d.getHours() + d.getMinutes()/60 + d.getSeconds()/3600;
+          const pct = (h/24*100).toFixed(2);
+          const timeStr = d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+          let act = entry.action ? (aLabels[entry.action]||entry.action) : '';
+          if (entry.action==='camera' && entry.meta && entry.meta.camId) act = entry.meta.camId.replace('cam','카메라');
+          const det = entry.detail ? entry.detail.replace(/"/g,'&quot;') : '';
+          const dotColors = {login:'#94a3b8',camera:'#4ade80',stage:'#f472b6',receive:'#38bdf8',release:'#fb923c',checkin:'#2dd4bf',checkout:'#a78bfa',inspect:'#facc15',schedule:'#818cf8',register:'#64748b'};
+          const dotColor = dotColors[entry.action] || '#3b82f6';
+          html += '<div class="tl-dot" style="left:'+pct+'%;background:'+dotColor+'" data-time="'+timeStr+'" data-act="'+act+'" data-det="'+det+'"></div>';
+        });
+        html += '</div></div>';
+      });
+      const nowPct = (curH/24*100).toFixed(2);
+      const divCount = document.querySelectorAll('#timelineWrap .tl-chart > div[style*="height:2px"]').length || 0;
+      const totalH = ids.length*32 + divCount*6;
+      html += '<div style="position:relative;margin-left:90px;height:0;"><div style="position:absolute;left:'+nowPct+'%;top:-'+totalH+'px;width:1px;height:'+totalH+'px;background:#ef4444;opacity:0.5;"></div></div>';
+      html += '<div style="display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0 90px;font-size:11px;color:#94a3b8;">';
+      const legend = [['로그인','#94a3b8'],['카메라','#4ade80'],['단계변경','#f472b6'],['입고','#38bdf8'],['출고','#fb923c'],['체크인','#2dd4bf'],['체크아웃','#a78bfa'],['검수','#facc15'],['출하일정','#818cf8']];
+      legend.forEach(l => { html += '<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+l[1]+';margin-right:3px;vertical-align:middle;"></span>'+l[0]+'</span>'; });
+      html += '</div>';
+      html += '</div>';
+      wrap.innerHTML = html;
+      let tipEl = document.getElementById('tlTip');
+      if (!tipEl) { tipEl = document.createElement('div'); tipEl.id='tlTip'; tipEl.className='tl-tip'; document.body.appendChild(tipEl); }
+      wrap.addEventListener('mouseover', e => {
+        const dot = e.target.closest('.tl-dot');
+        if (!dot) return;
+        const t = dot.dataset.time, a = dot.dataset.act, d = dot.dataset.det;
+        tipEl.innerHTML = '<span class="tip-time">'+t+'</span>'+(a?'<span class="tip-action">'+a+'</span>':'')+(d?'<span class="tip-detail">'+d+'</span>':'');
+        tipEl.style.display = 'block';
+        const r = dot.getBoundingClientRect();
+        tipEl.style.left = Math.min(r.left, window.innerWidth - tipEl.offsetWidth - 8) + 'px';
+        tipEl.style.top = (r.top - tipEl.offsetHeight - 6) + 'px';
+      });
+      wrap.addEventListener('mouseout', e => { if (e.target.closest('.tl-dot')) tipEl.style.display = 'none'; });
     }
 
     async function changeDept(id, dept) {
