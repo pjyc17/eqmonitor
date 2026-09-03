@@ -1973,7 +1973,7 @@ async function init() {
         document.getElementById('gearDeptSection').style.display = 'block';
         loadDeptUsers();
       }
-      if (FLIP_USERS.indexOf(currentUser.id) >= 0) {
+      if (FLIP_USERS.indexOf(currentUser.id) >= 0 && window.innerWidth > 700) {
         layoutFlipH = !!localStorage.getItem('layout_flipH_' + currentUser.id);
       }
       layoutFlipV = !!localStorage.getItem('layout_flipV_' + currentUser.id);

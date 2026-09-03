@@ -476,7 +476,7 @@ app.get('/api/graph/status', superOnly, async (req, res) => {
 
 app.post('/api/graph/check-emails', superOnly, async (req, res) => {
   try {
-    const result = await checkShippingEmails(req.user);
+    const result = await checkShippingEmails(req.user, req.body?.keyword || '출하일정');
     res.json(result);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -518,7 +518,7 @@ app.get('/vhwkd', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'vhwkd.html'));
 });
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const teams = ['산업품질1팀', '산업품질2팀', '제조혁신1&2팀'];
 
@@ -929,7 +929,8 @@ async function checkShippingEmails(user, keyword) {
   if (!emails.length) return { message: '출하검사 관련 메일을 찾을 수 없습니다 (최근 14일)', matched: [], unmatched: [] };
 
   const state = graph.loadState();
-  const latest = emails[0];
+  const ckhEmails = emails.filter(e => e.from?.emailAddress?.name?.includes('조건희') || e.from?.emailAddress?.address?.toLowerCase().includes('keonhee'));
+  const latest = ckhEmails.length > 0 ? ckhEmails[0] : emails[0];
 
   const isAuto = !user || user.id === 'auto';
   if (state.lastEmailId === latest.id && !isAuto) {
@@ -1243,7 +1244,10 @@ async function applyMidnightSchedule() {
       } else {
         const label = stageLabels[eq.shipStage] || '출하예정';
         incomplete.push(`${eq.line}-${eq.number} (${eq.equipName || '-'}, ${label})`);
-        eq.shipDate = null; eq.shipStage = null; eq.shipCanceled = false; eq.canceledAt = null; eq.prePackaging = false; eq.shipment = null; eq.mfgPerson = null;
+        eq.status = 'empty'; eq.equipName = null; eq.lotNo = null; eq.model = null; eq.vendor = null;
+        eq.priority = null; eq.team = null; eq.since = null; eq.receivedAt = null;
+        eq.shipDate = null; eq.shipStage = null; eq.shipCanceled = false; eq.canceledAt = null; eq.prePackaging = false;
+        eq.mfgInspected = false; eq.fqcInspected = false; eq.shipment = null; eq.mfgPerson = null;
       }
       io.emit('update', eq);
     }
@@ -1267,16 +1271,14 @@ async function applyMidnightSchedule() {
         matchedEq = Object.values(equipment).find(eq => eq.status !== 'empty' && eq.lotNo && eq.lotNo === item.trackingNo) || null;
       }
       if (matchedEq) {
-        if (matchedEq.status === 'empty' || matchedEq.shipCanceled) {
-          matchedEq.status = 'free';
-          matchedEq.shipCanceled = false; matchedEq.canceledAt = null;
-          matchedEq.mfgInspected = false;
-          matchedEq.fqcInspected = false;
-          if (item.snName) matchedEq.equipName = item.snName;
-          if (item.trackingNo) matchedEq.lotNo = item.trackingNo;
-          if (item.modelName) matchedEq.vendor = item.modelName;
-          matchedEq.receivedAt = Date.now();
-        }
+        matchedEq.status = 'free';
+        matchedEq.shipCanceled = false; matchedEq.canceledAt = null;
+        matchedEq.mfgInspected = false;
+        matchedEq.fqcInspected = false;
+        if (item.snName) matchedEq.equipName = item.snName;
+        if (item.trackingNo) matchedEq.lotNo = item.trackingNo;
+        if (item.modelName) matchedEq.vendor = item.modelName;
+        matchedEq.receivedAt = Date.now();
         matchedEq.shipDate = item.shipDate;
         matchedEq.shipStage = 'mail';
         if (item.fqcPerson) matchedEq.model = item.fqcPerson;
