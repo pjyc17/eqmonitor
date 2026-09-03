@@ -929,8 +929,17 @@ async function checkShippingEmails(user, keyword) {
   if (!emails.length) return { message: '출하검사 관련 메일을 찾을 수 없습니다 (최근 14일)', matched: [], unmatched: [] };
 
   const state = graph.loadState();
-  const ckhEmails = emails.filter(e => e.from?.emailAddress?.name?.includes('조건희') || e.from?.emailAddress?.address?.toLowerCase().includes('keonhee'));
-  const latest = ckhEmails.length > 0 ? ckhEmails[0] : emails[0];
+  const senderPriority = [
+    { name: '조건희', addr: 'keonhee' },
+    { name: '이준형', addr: 'jh.lee' },
+    { name: '전정민', addr: 'jmjun' },
+  ];
+  let latest = null;
+  for (const s of senderPriority) {
+    const found = emails.filter(e => e.from?.emailAddress?.name?.includes(s.name) || e.from?.emailAddress?.address?.toLowerCase().includes(s.addr));
+    if (found.length > 0) { latest = found[0]; break; }
+  }
+  if (!latest) latest = emails[0];
 
   const isAuto = !user || user.id === 'auto';
   if (state.lastEmailId === latest.id && !isAuto) {
