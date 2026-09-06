@@ -176,28 +176,28 @@ async function fetchShippingEmails(keyword) {
   const accessToken = await getAccessToken();
   if (!accessToken) throw new Error('인증이 필요합니다');
 
-  const searchWord = keyword || '출하검사';
-  const params = new URLSearchParams({
-    $search: `"${searchWord}"`,
-    $select: 'id,subject,from,receivedDateTime,body',
-    $top: '10',
-  });
-
-  const res = await fetch(`https://graph.microsoft.com/v1.0/me/messages?${params}`, {
+  const searchWord = keyword || '출하일정 송부';
+  const select = 'id,subject,from,receivedDateTime,body';
+  const url = `https://graph.microsoft.com/v1.0/me/messages?$search="${encodeURIComponent(searchWord)}"&$select=${select}&$top=10`;
+  console.log(`  [Graph] fetch: ${url.substring(0, 120)}...`);
+  const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
       ConsistencyLevel: 'eventual',
     },
   });
 
+  console.log(`  [Graph] status: ${res.status}`);
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
+    console.log(`  [Graph] error:`, JSON.stringify(err).substring(0, 200));
     if (res.status === 401) { clearTokens(); throw new Error('인증 만료 — 재로그인 필요'); }
     throw new Error(err.error?.message || `Graph API 오류 (${res.status})`);
   }
 
   const data = await res.json();
   const emails = data.value || [];
+  console.log(`  [Graph] raw results: ${emails.length}건`);
   // 최근 14일 내 메일만 필터
   const since = Date.now() - 14 * 24 * 60 * 60 * 1000;
   return emails

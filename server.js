@@ -476,7 +476,7 @@ app.get('/api/graph/status', superOnly, async (req, res) => {
 
 app.post('/api/graph/check-emails', superOnly, async (req, res) => {
   try {
-    const result = await checkShippingEmails(req.user, req.body?.keyword || '출하일정');
+    const result = await checkShippingEmails(req.user, req.body?.keyword || '출하일정 송부');
     res.json(result);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -487,7 +487,7 @@ app.post('/api/graph/run-midnight', superOnly, async (req, res) => {
   try {
     const status = await graph.getStatus();
     if (status.connected) {
-      await checkShippingEmails({ id: 'auto', name: '자동' }, '출하일정');
+      await checkShippingEmails({ id: 'auto', name: '자동' }, '출하일정 송부');
     }
   } catch (e) { console.error('  [수동자정] 메일체크 오류:', e.message); }
   clearCompletedEquipment();
@@ -874,7 +874,7 @@ app.post('/api/import-shipping-schedule', superOnly, (req, res) => {
 
   // 기존 parsedSchedule 초기화 후 새로 저장
   saveParsedSchedule(null);
-  parsedSchedule = { normal: normalItems, emailDate, tabText: text };
+  parsedSchedule = { normal: normalItems, prepackNames: prepackItems.map(p => p.snName || p.trackingNo).filter(Boolean), emailDate, tabText: text };
   saveParsedSchedule(parsedSchedule);
 
   // 선포장 장비만 즉시 배치
@@ -964,16 +964,19 @@ async function checkShippingEmails(user, keyword) {
   const dateMatch = latest.subject.match(/(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})/);
   const emailDate = dateMatch ? new Date(dateMatch[1], dateMatch[2] - 1, dateMatch[3]) : new Date(latest.receivedDateTime);
 
-  // 자동 체크 시: 메일 날짜가 오늘 또는 내일이 아니면 건너뜀
-  if (!user || user.id === 'auto' || user.id === 'prepack') {
+  // 자동 체크 시: 메일 날짜가 오늘~다음 영업일 범위 밖이면 건너뜀
+  if (!user || user.id === 'auto') {
     const today = new Date();
     today.setHours(0,0,0,0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextBiz = new Date(today);
+    const dow = today.getDay();
+    if (dow === 5) nextBiz.setDate(nextBiz.getDate() + 3);      // 금→월
+    else if (dow === 6) nextBiz.setDate(nextBiz.getDate() + 2);  // 토→월
+    else nextBiz.setDate(nextBiz.getDate() + 1);                  // 그 외→내일
     const mailDay = new Date(emailDate);
     mailDay.setHours(0,0,0,0);
-    if (mailDay.getTime() !== today.getTime() && mailDay.getTime() !== tomorrow.getTime()) {
-      console.log(`  [자동체크] 메일 날짜(${mailDay.toLocaleDateString('ko-KR')})가 오늘/내일과 불일치 — 건너뜀`);
+    if (mailDay < today || mailDay > nextBiz) {
+      console.log(`  [자동체크] 메일 날짜(${mailDay.toLocaleDateString('ko-KR')})가 범위(${today.toLocaleDateString('ko-KR')}~${nextBiz.toLocaleDateString('ko-KR')}) 밖 — 건너뜀`);
       return { message: `메일 날짜(${mailDay.toLocaleDateString('ko-KR')})가 오늘/내일과 맞지 않아 건너뜁니다`, matched: [], unmatched: [], skipped: true };
     }
   }
@@ -996,6 +999,7 @@ async function checkShippingEmails(user, keyword) {
   saveParsedSchedule(null);
   parsedSchedule = {
     normal: normalItems,
+    prepackNames: prepackItems.map(p => p.snName || p.trackingNo).filter(Boolean),
     emailDate,
     emailId: latest.id,
     subject: latest.subject,
@@ -1236,13 +1240,16 @@ async function applyMidnightSchedule() {
     // 기존 출하 데이터 정리 (선포장으로 이미 배치된 장비 제외)
     const stageLabels = { mail:'출하예정', parts:'생산관리완료', nt:'사전작업완료', fqc:'FQC완료', done:'출하완료' };
     const allItemNames = items.map(it => it.snName || it.trackingNo).filter(Boolean);
+    const prepackNames = (parsedSchedule && parsedSchedule.prepackNames) || [];
+    const allScheduleNames = [...allItemNames, ...prepackNames];
+    const isWeekend = [0, 6].includes(new Date().getDay());
     const cleared = [];
     const incomplete = [];
     for (const eq of Object.values(equipment)) {
       if (eq.status === 'empty' || eq.shipCanceled) continue;
       if (!eq.shipDate) continue;
       if (eq.prePackaging) continue;
-      const isInNewSchedule = allItemNames.some(name => name === eq.equipName || name === eq.lotNo);
+      const isInNewSchedule = allScheduleNames.some(name => name === eq.equipName || name === eq.lotNo);
       if (isInNewSchedule) continue;
       if (eq.shipStage === 'done') {
         cleared.push(`${eq.line}-${eq.number} (${eq.equipName || '-'})`);
@@ -1250,7 +1257,7 @@ async function applyMidnightSchedule() {
         eq.priority = null; eq.team = null; eq.since = null; eq.receivedAt = null;
         eq.shipDate = null; eq.shipStage = null; eq.shipCanceled = false; eq.canceledAt = null; eq.prePackaging = false;
         eq.mfgInspected = false; eq.fqcInspected = false; eq.shipment = null; eq.mfgPerson = null;
-      } else {
+      } else if (!isWeekend) {
         const label = stageLabels[eq.shipStage] || '출하예정';
         incomplete.push(`${eq.line}-${eq.number} (${eq.equipName || '-'}, ${label})`);
         eq.status = 'empty'; eq.equipName = null; eq.lotNo = null; eq.model = null; eq.vendor = null;
@@ -1267,6 +1274,10 @@ async function applyMidnightSchedule() {
     if (incomplete.length > 0) {
       addLog('schedule', 'auto', '자동', `출하 미완료 ${incomplete.length}건 초기화: ${incomplete.join(', ')}`);
       console.log(`  [자정] 미완료 ${incomplete.length}건 초기화`);
+    }
+    if (isWeekend) {
+      const kept = Object.values(equipment).filter(eq => eq.status !== 'empty' && eq.shipDate && !eq.shipCanceled && eq.shipStage !== 'done').length;
+      if (kept > 0) console.log(`  [자정] 주말 — 미완료 ${kept}건 유지 (초기화 건너뜀)`);
     }
 
     // 일반 장비 슬롯에 배치
@@ -1359,7 +1370,7 @@ function schedulePrepackCheck() {
     try {
       const status = await graph.getStatus();
       if (status.connected) {
-        const result = await checkShippingEmails({ id: 'prepack', name: '선포장자동' }, '출하일정');
+        const result = await checkShippingEmails({ id: 'prepack', name: '선포장자동' }, '출하일정 송부');
         if (result.skipped) {
           console.log(`  [14:30] ${result.message}`);
         } else {
@@ -1388,7 +1399,7 @@ function scheduleDailyCheck() {
     try {
       const status = await graph.getStatus();
       if (status.connected) {
-        const result = await checkShippingEmails({ id: 'auto', name: '자동' }, '출하일정');
+        const result = await checkShippingEmails({ id: 'auto', name: '자동' }, '출하일정 송부');
         if (result.skipped) {
           console.log(`  [자정 메일체크] ${result.message}`);
         } else {
