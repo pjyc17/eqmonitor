@@ -524,6 +524,7 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',sans-serif; }
       </div>
     </div>
     <button class="back-btn" id="mailBtn" onclick="openShipModal()" style="display:none;">메일 가져오기</button>
+    <button class="back-btn" id="mailCheckBtn" onclick="quickCheckEmails()" style="display:none;">메일 체크</button>
     <button class="back-btn" onclick="location.href='/manual.html'" title="사용자 매뉴얼">&#128214;</button>
     <button class="back-btn" id="monitorBtn" onclick="location.href='/'" style="display:none;">&#8592; 모니터링</button>
   </div>
@@ -1295,6 +1296,28 @@ async function checkOutlookEmails() {
   }
 }
 
+async function quickCheckEmails() {
+  var btn = document.getElementById('mailCheckBtn');
+  btn.disabled = true; btn.textContent = '확인 중...';
+  try {
+    var res = await fetch('/api/graph/check-emails', {method:'POST', headers:{'Authorization':'Bearer '+authToken}});
+    var data = await res.json();
+    if (!res.ok) { alert(data.error || '오류'); return; }
+    if (data.skipped) {
+      showToast('메일 체크', '새로운 메일이 없습니다');
+    } else {
+      var pre = data.prepackCount || 0;
+      var nor = data.normalCount || 0;
+      var msg = '';
+      if (pre > 0) msg += '선포장 ' + pre + '건 배치';
+      if (nor > 0) msg += (msg ? ', ' : '') + '일반 ' + nor + '건 자정 배치 예정';
+      if (!msg) msg = '처리할 항목 없음';
+      showToast('메일 체크', msg);
+    }
+  } catch(e) { alert('메일 체크 오류: ' + e.message); }
+  finally { btn.disabled = false; btn.textContent = '메일 체크'; }
+}
+
 function renderPasteTab() {
   var el = document.getElementById('shipTabContent');
   el.innerHTML =
@@ -1959,6 +1982,7 @@ async function init() {
       if (currentUser.id === 'pjyc17') {
         document.getElementById('statsBtn').style.display = 'inline-block';
         document.getElementById('mailBtn').style.display = 'inline-block';
+        document.getElementById('mailCheckBtn').style.display = 'inline-block';
         document.getElementById('monitorBtn').style.display = 'inline-block';
       }
       if (currentUser.dept === '산업품질2팀' || currentUser.id === 'pjyc17') {

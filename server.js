@@ -35,7 +35,7 @@ const LINE_CONFIG = {
   'IA': {start:1, end:5}, 'IB': {start:1, end:5}, 'IC': {start:1, end:5}, 'ID': {start:1, end:5},
 };
 const LINE_NAMES = Object.keys(LINE_CONFIG);
-const DATA_FILE = path.join(__dirname, 'data.json');
+const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data.json');
 const USERS_FILE = path.join(__dirname, 'users.json');
 const LOG_FILE = path.join(__dirname, 'log.json');
 const NOTIF_FILE = path.join(__dirname, 'notifications.json');
@@ -1007,9 +1007,9 @@ async function checkShippingEmails(user, keyword) {
   };
   saveParsedSchedule(parsedSchedule);
 
-  // 선포장 장비 즉시 배치 (자정 auto 호출 시 건너뜀 — 이미 14:30에 배치됨)
+  // 선포장 장비 즉시 배치
   const results = { matched: [], unmatched: [], total: allParsed.length };
-  if (prepackItems.length > 0 && user && user.id !== 'auto') {
+  if (prepackItems.length > 0) {
     for (const item of prepackItems) {
       let matchedEq = null;
       if (item.lineSlot) {
@@ -1020,6 +1020,17 @@ async function checkShippingEmails(user, keyword) {
         matchedEq = Object.values(equipment).find(eq => eq.status !== 'empty' && eq.lotNo && eq.lotNo === item.trackingNo) || null;
       }
       if (matchedEq) {
+        if (matchedEq.prePackaging && matchedEq.shipDate) {
+          results.matched.push({
+            slot: `${matchedEq.line}라인 ${matchedEq.number}번`,
+            equipName: matchedEq.equipName || '-',
+            trackingNo: item.trackingNo,
+            shipDate: new Date(item.shipDate).toLocaleDateString('ko-KR'),
+            matchMethod: 'already',
+            prePackaging: true,
+          });
+          continue;
+        }
         if (matchedEq.status === 'empty' || matchedEq.shipCanceled) {
           matchedEq.status = 'free';
           matchedEq.shipCanceled = false; matchedEq.canceledAt = null;
@@ -1245,8 +1256,18 @@ async function applyMidnightSchedule() {
     const isWeekend = [0, 6].includes(new Date().getDay());
     const cleared = [];
     const incomplete = [];
+    const canceled = [];
     for (const eq of Object.values(equipment)) {
-      if (eq.status === 'empty' || eq.shipCanceled) continue;
+      if (eq.status === 'empty') continue;
+      if (eq.shipCanceled) {
+        canceled.push(`${eq.line}-${eq.number} (${eq.equipName || '-'})`);
+        eq.status = 'empty'; eq.equipName = null; eq.lotNo = null; eq.model = null; eq.vendor = null;
+        eq.priority = null; eq.team = null; eq.since = null; eq.receivedAt = null;
+        eq.shipDate = null; eq.shipStage = null; eq.shipCanceled = false; eq.canceledAt = null; eq.prePackaging = false;
+        eq.mfgInspected = false; eq.fqcInspected = false; eq.shipment = null; eq.mfgPerson = null;
+        io.emit('update', eq);
+        continue;
+      }
       if (!eq.shipDate) continue;
       if (eq.prePackaging) continue;
       const isInNewSchedule = allScheduleNames.some(name => name === eq.equipName || name === eq.lotNo);
@@ -1266,6 +1287,10 @@ async function applyMidnightSchedule() {
         eq.mfgInspected = false; eq.fqcInspected = false; eq.shipment = null; eq.mfgPerson = null;
       }
       io.emit('update', eq);
+    }
+    if (canceled.length > 0) {
+      addLog('schedule', 'auto', '자동', `취소 장비 ${canceled.length}건 초기화: ${canceled.join(', ')}`);
+      console.log(`  [자정] 취소 ${canceled.length}건 초기화`);
     }
     if (cleared.length > 0) {
       addLog('schedule', 'auto', '자동', `출하 완료 장비 ${cleared.length}건 슬롯 초기화: ${cleared.join(', ')}`);
@@ -1419,8 +1444,7 @@ function scheduleDailyCheck() {
     scheduleDailyCheck();
   }, delay);
 }
-scheduleDailyCheck();
-schedulePrepackCheck();
+if (!process.env.SIM_MODE) { scheduleDailyCheck(); schedulePrepackCheck(); }
 
 // ── 리포트 자동 발송 스케줄러 ──
 // 매일 7:25에 깨어나서, 해당 일에 맞는 리포트를 시차 발송
@@ -1476,7 +1500,7 @@ function fireReports() {
   }
 }
 
-scheduleReportCheck();
+if (!process.env.SIM_MODE) scheduleReportCheck();
 
 app.get('/api/status', (req, res) => {
   res.json(equipment);
@@ -2834,8 +2858,8 @@ function getLocalIP() {
   return 'localhost';
 }
 
-const PORT = 3000;
-const SSL_PORT = 3443;
+const PORT = parseInt(process.env.HTTP_PORT) || 3000;
+const SSL_PORT = parseInt(process.env.SSL_PORT) || 3443;
 
 // HTTP → HTTPS 리다이렉트 전용 (API 처리 없음)
 server.listen(PORT, '0.0.0.0');
