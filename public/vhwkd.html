@@ -919,7 +919,7 @@ function showTip(ev, id) {
         var rvStyle = si.prev === 'fqc'
           ? 'background:repeating-conic-gradient(#334155 0% 25%,#1e293b 0% 50%) 0 0/10px 10px;color:#94a3b8;border:1px solid #475569;'
           : 'background:' + pc + '20;color:' + pc + ';border:1px solid ' + pc + ';';
-        btnHtml += '<button class="stage-btn" style="' + rvStyle + '" onclick="setStage(\'' + id + '\',\'' + si.prev + '\')">' + prevLabel + ' 돌아가기</button>';
+        btnHtml += '<button class="stage-btn" style="' + rvStyle + '" onclick="showRevertBox(\'' + id + '\',\'' + si.prev + '\')">' + prevLabel + ' 돌아가기</button>';
       }
     }
     if (si.next) {
@@ -958,6 +958,13 @@ function showTip(ev, id) {
       '<div style="display:flex;gap:6px;margin-top:8px;">' +
         ((currentUser.dept === '산업품질2팀' || currentUser.id === 'pjyc17') ? '<button class="tip-close" style="margin:0;color:#ef4444;border-color:#ef444440;" onclick="showCancelPrompt(\'' + id + '\')">취소</button>' : '') +
         '<button class="tip-close" style="margin:0;" onclick="hideTip()">닫기</button>' +
+      '</div>' +
+      '<div id="revertBox" style="display:none;margin-top:8px;">' +
+        '<div style="font-size:11px;color:#f59e0b;margin-bottom:6px;">되돌림 사유 (선택)</div>' +
+        '<div style="display:flex;gap:6px;">' +
+          '<input type="text" id="revertReason" style="flex:1;background:#0f172a;border:1px solid #f59e0b40;border-radius:6px;color:#e2e8f0;padding:8px;font-size:14px;outline:none;" placeholder="사유를 입력하세요" onkeydown="if(event.key===\'Enter\')confirmRevert()">' +
+          '<button onclick="confirmRevert()" style="background:#f59e0b;color:#000;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">확인</button>' +
+        '</div>' +
       '</div>' +
       ((currentUser.dept === '산업품질2팀' || currentUser.id === 'pjyc17') ?
       '<div id="cancelBox" style="display:none;margin-top:8px;">' +
@@ -1413,6 +1420,19 @@ async function testWebhook() {
   }
 }
 
+var revertTarget = null;
+function showRevertBox(id, stage) {
+  revertTarget = {id: id, stage: stage};
+  var box = document.getElementById('revertBox');
+  if (box) { box.style.display = 'block'; document.getElementById('revertReason').value = ''; document.getElementById('revertReason').focus(); }
+}
+function confirmRevert() {
+  if (!revertTarget || !socket) return;
+  var reason = (document.getElementById('revertReason').value || '').trim();
+  socket.emit('setShipStage', {equipmentId: revertTarget.id, stage: revertTarget.stage, reason: reason || undefined});
+  revertTarget = null;
+  hideTip();
+}
 function setStage(id, stage) {
   if (!socket) return;
   socket.emit('setShipStage', {equipmentId: id, stage: stage});

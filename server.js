@@ -2187,7 +2187,7 @@ io.on('connection', (socket) => {
   const VALID_STAGES = ['mail','parts','nt','fqc','done'];
   const STAGE_ORDER = {mail:0, parts:1, nt:2, fqc:3, done:4};
   const REVERT_PERM = {parts:'생산관리', nt:'엔티', fqc:'산업품질2팀'};
-  socket.on('setShipStage', ({ equipmentId, stage }) => {
+  socket.on('setShipStage', ({ equipmentId, stage, reason }) => {
     const eq = equipment[equipmentId];
     if (!eq || !eq.shipDate) return;
     if (!VALID_STAGES.includes(stage)) return;
@@ -2211,8 +2211,9 @@ io.on('connection', (socket) => {
     io.emit('update', eq);
     saveData();
     const stageLabels = {mail:'출하예정',parts:'생산관리완료',nt:'사전작업완료',fqc:'FQC완료',done:'출하완료'};
+    const reasonText = isRevert && reason && reason.trim() ? ` — 사유: ${reason.trim()}` : '';
     const detail = isRevert
-      ? `${eq.line}라인 ${eq.number}번 되돌림:${stageLabels[prev]}→${stageLabels[stage]} (${eq.equipName})`
+      ? `${eq.line}라인 ${eq.number}번 되돌림:${stageLabels[prev]}→${stageLabels[stage]} (${eq.equipName})${reasonText}`
       : `${eq.line}라인 ${eq.number}번 ${stageLabels[stage]} (${eq.equipName})`;
     addLog('stage', u?.id, u?.name, detail, { equipmentId: eq.id, equipName: eq.equipName, line: eq.line, slotNumber: eq.number, shipDate: eq.shipDate });
     io.emit('newLog');
