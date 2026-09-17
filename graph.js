@@ -317,6 +317,8 @@ async function sendMail(to, subject, htmlBody, attachments) {
     }));
   }
 
+  message.saveToSentItems = false;
+
   const res = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
     method: 'POST',
     headers: {
