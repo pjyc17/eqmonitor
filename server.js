@@ -1384,6 +1384,30 @@ async function applyMidnightSchedule() {
 }
 
 // 오후 2:30: 메일 자동 체크 → 선포장 장비만 즉시 배치, 일반은 자정 대기
+// 출하일정 메일 도착이 14~18시로 들쭉날쭉해서, 못 잡으면 1시간 간격으로 재시도
+const PREPACK_RETRY_MAX = 4;
+
+async function runPrepackCheck(attempt) {
+  const tag = attempt === 0 ? '14:30' : `14:30 재시도 ${attempt}/${PREPACK_RETRY_MAX}`;
+  try {
+    const status = await graph.getStatus();
+    if (!status.connected) {
+      console.log(`  [${tag}] Graph API 미연결`);
+      return false;
+    }
+    const result = await checkShippingEmails({ id: 'prepack', name: '선포장자동' }, '출하일정 송부');
+    if (result.skipped) {
+      console.log(`  [${tag}] ${result.message}`);
+      return false;
+    }
+    console.log(`  [${tag}] 선포장 ${result.matched?.filter(m => m.prePackaging).length || 0}건 배치, 일반 자정 대기`);
+    return true;
+  } catch (e) {
+    console.error(`  [${tag}] 오류:`, e.message);
+    return false;
+  }
+}
+
 function schedulePrepackCheck() {
   const now = new Date();
   const target = new Date(now);
@@ -1392,20 +1416,9 @@ function schedulePrepackCheck() {
   const delay = target - now;
   console.log(`  [스케줄] 다음 선포장 체크: ${target.toLocaleString('ko-KR')} (${Math.round(delay/60000)}분 후)`);
   setTimeout(async () => {
-    try {
-      const status = await graph.getStatus();
-      if (status.connected) {
-        const result = await checkShippingEmails({ id: 'prepack', name: '선포장자동' }, '출하일정 송부');
-        if (result.skipped) {
-          console.log(`  [14:30] ${result.message}`);
-        } else {
-          console.log(`  [14:30] 선포장 ${result.matched?.filter(m => m.prePackaging).length || 0}건 배치, 일반 자정 대기`);
-        }
-      } else {
-        console.log('  [14:30] Graph API 미연결');
-      }
-    } catch (e) {
-      console.error('  [14:30] 오류:', e.message);
+    for (let attempt = 0; attempt <= PREPACK_RETRY_MAX; attempt++) {
+      if (attempt > 0) await new Promise(r => setTimeout(r, 60 * 60 * 1000));
+      if (await runPrepackCheck(attempt)) break;
     }
     schedulePrepackCheck();
   }, delay);
