@@ -1269,9 +1269,12 @@ async function applyMidnightSchedule() {
         continue;
       }
       if (!eq.shipDate) continue;
-      if (eq.prePackaging) continue;
-      const isInNewSchedule = allScheduleNames.some(name => name === eq.equipName || name === eq.lotNo);
-      if (isInNewSchedule) continue;
+      // 출하완료는 선포장 여부, 새 일정 포함 여부와 무관하게 종료 처리
+      if (eq.shipStage !== 'done') {
+        if (eq.prePackaging) continue;
+        const isInNewSchedule = allScheduleNames.some(name => name === eq.equipName || name === eq.lotNo);
+        if (isInNewSchedule) continue;
+      }
       if (eq.shipStage === 'done') {
         cleared.push(`${eq.line}-${eq.number} (${eq.equipName || '-'})`);
         eq.status = 'empty'; eq.equipName = null; eq.lotNo = null; eq.model = null; eq.vendor = null;
