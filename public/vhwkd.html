@@ -498,6 +498,7 @@ body { background:#0f172a; color:#e2e8f0; font-family:'Segoe UI',sans-serif; }
             <input type="text" id="msTracking" placeholder="Tracking No">
             <input type="text" id="msVendor" placeholder="고객사">
             <input type="text" id="msFqc" placeholder="FQC 담당자">
+            <input type="text" id="msMfg" placeholder="제조 담당자">
             <input type="password" id="msPw" placeholder="비밀번호" style="font-size:16px;" onkeydown="if(event.key==='Enter')doManualShip()">
             <button class="gear-submit" onclick="doManualShip()">등록</button>
             <div class="gear-err" id="msErr"></div>
@@ -1964,6 +1965,7 @@ function doManualShip() {
   var tracking = document.getElementById('msTracking').value.trim();
   var vendor = document.getElementById('msVendor').value.trim();
   var fqcPerson = document.getElementById('msFqc').value.trim();
+  var mfgPerson = document.getElementById('msMfg').value.trim();
   var pw = document.getElementById('msPw').value;
   if (!slot) { errEl.textContent = '슬롯 번호를 입력하세요'; return; }
   if (!sn) { errEl.textContent = 'S/N을 입력하세요'; return; }
@@ -1972,7 +1974,7 @@ function doManualShip() {
   errEl.textContent = '처리 중...';
   var done = false;
   var timer = setTimeout(function() { if (!done) { done = true; errEl.textContent = '서버 응답 없음'; } }, 5000);
-  socket.emit('manualShip', {targetId: targetId, equipName: sn, trackingNo: tracking, vendor: vendor, fqcPerson: fqcPerson, password: pw}, function(res) {
+  socket.emit('manualShip', {targetId: targetId, equipName: sn, trackingNo: tracking, vendor: vendor, fqcPerson: fqcPerson, mfgPerson: mfgPerson, password: pw}, function(res) {
     if (done) return;
     done = true;
     clearTimeout(timer);
@@ -1984,6 +1986,7 @@ function doManualShip() {
       document.getElementById('msTracking').value = '';
       document.getElementById('msVendor').value = '';
       document.getElementById('msFqc').value = '';
+      document.getElementById('msMfg').value = '';
       document.getElementById('msPw').value = '';
       setTimeout(function() { errEl.textContent = ''; errEl.style.color = '#ef4444'; }, 2000);
     } else {

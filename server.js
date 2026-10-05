@@ -2483,7 +2483,7 @@ io.on('connection', (socket) => {
   // 수동 출하 등록
   socket.on('manualShip', (data, ack) => {
     try {
-      const { targetId, equipName, trackingNo, vendor, fqcPerson, password } = data || {};
+      const { targetId, equipName, trackingNo, vendor, fqcPerson, mfgPerson, password } = data || {};
       const u = socket.user;
       if (!u) { if (ack) ack({ error: '인증 필요' }); return; }
       const users = loadUsers();
@@ -2496,6 +2496,7 @@ io.on('connection', (socket) => {
       eq.status = 'free'; eq.equipName = equipName || '';
       eq.lotNo = trackingNo || ''; eq.vendor = vendor || '';
       if (fqcPerson) eq.model = fqcPerson;
+      if (mfgPerson) eq.mfgPerson = mfgPerson;
       eq.shipDate = Date.now(); eq.shipStage = 'mail'; eq.receivedAt = Date.now();
       io.emit('update', eq);
       saveData();
